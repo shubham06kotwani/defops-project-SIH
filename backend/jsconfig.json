@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "checkJs": false,
+    "forceConsistentCasingInFileNames": false
+  },
+  "exclude": ["node_modules"]
+}

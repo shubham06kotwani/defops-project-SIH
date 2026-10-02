@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/defops_sih';
+    const conn = await mongoose.connect(uri);
+    console.log(`[DATABASE] MongoDB Connected: ${conn.connection.host}`);
   } catch (err) {
-    console.error(`Error: ${err.message}`);
-    process.exit(1);
+    console.warn(`[WARN] MongoDB not reachable at ${process.env.MONGO_URI || 'default'}: ${err.message}`);
+    console.warn('[INFO] P-LFSCS Tactical Server running in Graceful Fallback / Static Serving mode.');
   }
 };
 

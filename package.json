@@ -1,11 +1,20 @@
 {
   "name": "defops-project-sih",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Indian Army - Predictive Logistics & Forward Supply Chain (P-LFSCS)",
+  "main": "backend/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node backend/server.js",
+    "seed": "node backend/seed.js"
   },
-  "keywords": [],
-  "type": "commonjs"
+  "keywords": [
+    "indian-army",
+    "predictive-logistics",
+    "supply-chain",
+    "iot-telemetry",
+    "ai-forecasting",
+    "gis-mapping"
+  ],
+  "author": "Defence Services Staff College",
+  "license": "ISC"
 }

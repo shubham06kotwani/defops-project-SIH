@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "checkJs": false,
+    "forceConsistentCasingInFileNames": false
+  },
+  "include": ["backend/**/*"],
+  "exclude": ["node_modules"]
+}
