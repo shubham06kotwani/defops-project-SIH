@@ -7,8 +7,8 @@ const connectDB = async () => {
 
     const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/defops_sih';
     const conn = await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 1500, // 1.5s fast timeout instead of 30s hang
-      connectTimeoutMS: 1500
+      serverSelectionTimeoutMS: process.env.NODE_ENV === 'production' ? 8000 : 2500,
+      connectTimeoutMS: process.env.NODE_ENV === 'production' ? 8000 : 2500
     });
     console.log(`[DATABASE] MongoDB Connected: ${conn.connection.host}`);
   } catch (err) {
