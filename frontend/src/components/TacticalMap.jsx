@@ -67,7 +67,7 @@ const STRATEGIC_CORRIDORS = [
 ];
 
 // Strategic military locations in Northern Command
-const STRATEGIC_LOCATIONS = [
+export const STRATEGIC_LOCATIONS = [
   { id: 'LEH', name: 'Leh Forward Depot & Airbase', lat: 34.1526, lng: 77.5771, elev: 3500, sector: 'NORTHERN_COMMAND' },
   { id: 'SIACHEN', name: 'Siachen Glacier Base Camp (Kumar Post Axis)', lat: 35.1970, lng: 77.1700, elev: 5400, sector: 'SIACHEN_SECTOR' },
   { id: 'KARGIL', name: 'Kargil Forward Line (121 Inf Bde)', lat: 34.5539, lng: 76.1349, elev: 4200, sector: 'KARGIL_SECTOR' },
@@ -81,7 +81,7 @@ const STRATEGIC_LOCATIONS = [
 ];
 
 // Haversine distance calculator in KM
-function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+export function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in km
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
@@ -94,14 +94,21 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 }
 
 // Military Grid Reference approximation
-function computeMGRS(lat, lng) {
+export function computeMGRS(lat, lng) {
   const latBand = lat > 32 ? 'X' : 'W';
   const easting = Math.abs(Math.round((lng - 70) * 10000)).toString().slice(-4);
   const northing = Math.abs(Math.round((lat - 30) * 10000)).toString().slice(-4);
   return `43${latBand} LK ${easting} ${northing}`;
 }
 
-export default function TacticalMap({ containers = [], onSelectContainer, onCreateRequisition, apiBase = '' }) {
+export default function TacticalMap({ 
+  containers = [], 
+  onSelectContainer, 
+  onCreateRequisition, 
+  apiBase = '',
+  activeLocation,
+  onSelectLocation 
+}) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const tileLayerRef = useRef(null);
@@ -300,12 +307,19 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
 
     // Dynamic extraction of live weather and elevation from Open-Meteo
     const weatherData = await fetchOpenMeteoWeather(roundedLat, roundedLng);
-    if (weatherData && weatherData.elevation) {
-      setManualTarget(prev => ({
-        ...prev,
-        elevation: weatherData.elevation,
-        liveWeather: weatherData.current
-      }));
+    const finalElev = weatherData?.elevation || targetData.elevation;
+    const finalWeather = weatherData?.current || null;
+
+    const resolvedFullTarget = {
+      ...targetData,
+      elevation: finalElev,
+      liveWeather: finalWeather
+    };
+
+    setManualTarget(resolvedFullTarget);
+
+    if (onSelectLocation) {
+      onSelectLocation(resolvedFullTarget);
     }
   };
 
@@ -653,7 +667,7 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
                 {onCreateRequisition && (
                   <button
                     type="button"
-                    onClick={() => onCreateRequisition('AMMUNITION', 500)}
+                    onClick={() => onCreateRequisition('AMMUNITION', 500, manualTarget)}
                     className="px-3 py-1.5 rounded bg-[#ff6600] hover:bg-[#e65100] text-white text-[11px] font-stencil font-bold tracking-wider flex items-center gap-1 shadow-xs transition-all cursor-pointer"
                   >
                     <Box size={12} />

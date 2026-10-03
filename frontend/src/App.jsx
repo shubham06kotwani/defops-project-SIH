@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 import AuthPage from './components/AuthPage';
-import TacticalMap from './components/TacticalMap';
+import TacticalMap, { STRATEGIC_LOCATIONS } from './components/TacticalMap';
 import DemandForecast from './components/DemandForecast';
 import Requisitions from './components/Requisitions';
 import ConvoyTracker from './components/ConvoyTracker';
@@ -132,9 +132,36 @@ export default function App() {
   });
 
   const [activeTab, setActiveTab] = useState('map');
+  const [activeLocation, setActiveLocation] = useState(STRATEGIC_LOCATIONS[0]);
   const [containers, setContainers] = useState(DEFAULT_CONTAINERS);
   const [indents, setIndents] = useState(DEFAULT_INDENTS);
   const [connected, setConnected] = useState(false);
+
+  // Sync real-time Open-Meteo weather for activeLocation if not already present
+  useEffect(() => {
+    let isMounted = true;
+    if (activeLocation?.lat && activeLocation?.lng && !activeLocation.liveWeather) {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${activeLocation.lat}&longitude=${activeLocation.lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`;
+      fetch(url)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (isMounted && data?.current) {
+            setActiveLocation(prev => ({
+              ...prev,
+              liveWeather: {
+                temperature: data.current.temperature_2m,
+                humidity: data.current.relative_humidity_2m,
+                windSpeed: data.current.wind_speed_10m,
+                weatherLabel: data.current.weather_code === 0 ? 'Clear Sky' : data.current.weather_code < 4 ? 'Partly Cloudy' : data.current.weather_code < 70 ? 'Rain' : 'Snowfall',
+                weatherIcon: data.current.weather_code === 0 ? '☀️' : data.current.weather_code < 70 ? '🌧️' : '❄️'
+              }
+            }));
+          }
+        })
+        .catch(() => {});
+    }
+    return () => { isMounted = false; };
+  }, [activeLocation?.id, activeLocation?.lat, activeLocation?.lng]);
 
   const handleLogin = (userData) => {
     setUser(userData);
@@ -256,10 +283,11 @@ export default function App() {
     });
   };
 
-  const handleCreateRequisitionFromForecast = (category, qty) => {
+  const handleCreateRequisitionFromForecast = (category, qty, locationTarget) => {
     setActiveTab('indents');
+    const unit = locationTarget?.name || activeLocation?.name || 'Northern Command Forward Depot';
     handleAddIndent({
-      unitName: 'Northern Command Forward Depot',
+      unitName: unit,
       category,
       quantity: qty,
       priority: 'HIGH'
@@ -269,6 +297,19 @@ export default function App() {
   const anomalyCount = containers.filter(c => c.status && c.status !== 'NORMAL').length;
   const breachCount = containers.filter(c => c.status === 'COLD_CHAIN_BREACH').length;
   const pendingIndents = indents.filter(i => i.status === 'PENDING').length;
+
+  // Dynamic location-adjusted operational metrics
+  const locElevation = activeLocation?.elevation || activeLocation?.elev || 3500;
+  const locTemp = activeLocation?.liveWeather?.temperature;
+
+  // 1. Dynamic Buffer Sustainability based on altitude and thermal friction
+  const dynamicBufferDays = Math.max(7, Math.round(
+    32 - (locElevation - 1500) / 250 - (locTemp !== undefined && locTemp < 0 ? Math.abs(locTemp) * 0.35 : 0)
+  ));
+
+  // 2. Dynamic Cold Chain & Temperature Hazard
+  const isFreezingRisk = locTemp !== undefined && locTemp < -10;
+  const isHeatRisk = locTemp !== undefined && locTemp > 25;
 
   return (
     <div className="min-h-screen bg-[#f4f7f5] text-gray-900 flex flex-col font-sans">
@@ -467,7 +508,54 @@ export default function App() {
               </div>
             )}
 
-            {/* Command Center 4 Tactical KPI Gauge Cards - Clean White Surface */}
+            {/* Operational Sector & Geographic Location Controller Ribbon */}
+            <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 shadow-xs hud-corner-brackets flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="p-1.5 rounded bg-[#1c3824] text-white">
+                  <MapPin size={16} />
+                </div>
+                <div>
+                  <div className="text-[10px] font-stencil font-bold text-gray-500 uppercase tracking-widest">
+                    ACTIVE OPERATIONAL THEATRE // TARGET OUTPOST
+                  </div>
+                  <div className="font-stencil font-bold text-sm text-[#1c3824] flex items-center gap-2">
+                    <span>{activeLocation?.name || 'Northern Command Sector'}</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#e8f3ec] text-[#1c3824] border border-[#c2dcd0]">
+                      {locElevation}m ELEVATION
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <select
+                  value={activeLocation?.id || ''}
+                  onChange={(e) => {
+                    const found = STRATEGIC_LOCATIONS.find(l => l.id === e.target.value);
+                    if (found) setActiveLocation(found);
+                  }}
+                  className="bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono font-bold outline-none focus:border-[#ff6600]"
+                >
+                  {STRATEGIC_LOCATIONS.map(loc => (
+                    <option key={loc.id} value={loc.id}>
+                      📍 {loc.name} ({loc.elev}m)
+                    </option>
+                  ))}
+                </select>
+
+                {activeLocation?.liveWeather && (
+                  <div className="bg-[#f0f6f2] border border-[#c2dcd0] text-[11px] font-mono px-2.5 py-1 rounded flex items-center gap-2">
+                    <span className="font-bold text-[#1c3824]">
+                      {activeLocation.liveWeather.weatherIcon || '☀️'} {activeLocation.liveWeather.temperature ?? '--'}°C
+                    </span>
+                    <span className="text-gray-500">&bull;</span>
+                    <span className="text-gray-700">{activeLocation.liveWeather.weatherLabel || 'Atmosphere'}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Command Center 4 Tactical KPI Gauge Cards - Dynamic to Active Location */}
             <section className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
               <div className="bg-white border border-[#c8ddcf] rounded-lg p-4 shadow-xs border-l-4 border-l-[#1c3824] hud-corner-brackets transition-all hover:border-[#1c3824]">
                 <div className="text-[#1c3824] font-stencil font-bold uppercase tracking-wider text-xs flex items-center justify-between">
@@ -475,16 +563,16 @@ export default function App() {
                   <span className="text-[10px] font-mono text-gray-500">GIS LIVE</span>
                 </div>
                 <div className="font-stencil font-bold text-3xl text-gray-900 mt-1">
-                  {containers.length} <small className="text-xs font-normal text-gray-500 font-sans">DEPOTS & CONVOYS</small>
+                  {containers.length} <small className="text-xs font-normal text-gray-500 font-sans">DEPOTS &amp; CONVOYS</small>
                 </div>
                 <div className="text-[11px] text-[#16a34a] font-mono mt-1 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-ping"></span>
-                  <span>Sat-Tracked Northern Axis</span>
+                  <span>{activeLocation?.name?.split(' (')[0] || 'Northern Axis'} Corridor</span>
                 </div>
               </div>
 
               <div className={`bg-white rounded-lg p-4 shadow-xs border-l-4 hud-corner-brackets transition-all ${
-                breachCount > 0 
+                isFreezingRisk || isHeatRisk || breachCount > 0 
                   ? 'border border-red-300 border-l-red-600 bg-red-50/50' 
                   : 'border border-[#c8ddcf] border-l-[#ff6600] hover:border-[#ff6600]'
               }`}>
@@ -492,11 +580,17 @@ export default function App() {
                   <span>COLD-CHAIN ASSURANCE</span>
                   <span className="text-[10px] font-mono text-gray-500">SENSORS</span>
                 </div>
-                <div className={`font-stencil font-bold text-3xl mt-1 ${breachCount > 0 ? 'text-red-600' : 'text-[#d97706]'}`}>
-                  {breachCount > 0 ? `${breachCount} BREACH DETECTED` : '100% NOMINAL'}
+                <div className={`font-stencil font-bold text-2xl mt-1 ${
+                  isFreezingRisk ? 'text-sky-700' : isHeatRisk || breachCount > 0 ? 'text-red-600' : 'text-[#d97706]'
+                }`}>
+                  {locThermalStatus}
                 </div>
                 <div className="text-[11px] text-gray-500 font-mono mt-1">
-                  Threshold: &le; 25.0°C Medical/Munitions
+                  {isFreezingRisk 
+                    ? 'Sub-zero freeze hazard • Cryo-protection active' 
+                    : isHeatRisk 
+                    ? 'Heat threshold exceeded • Active cooling on' 
+                    : 'Thermal Envelope: -10°C to 25.0°C Nominal'}
                 </div>
               </div>
 
@@ -506,10 +600,10 @@ export default function App() {
                   <span className="text-[10px] font-mono text-gray-500">AI PROJECTION</span>
                 </div>
                 <div className="font-stencil font-bold text-3xl text-[#997746] mt-1">
-                  18 DAYS <small className="text-xs font-normal text-gray-500 font-sans">RESERVE</small>
+                  {dynamicBufferDays} DAYS <small className="text-xs font-normal text-gray-500 font-sans">RESERVE</small>
                 </div>
                 <div className="text-[11px] text-gray-500 font-mono mt-1">
-                  Leh &bull; Kargil &bull; Siachen Buffer
+                  {activeLocation?.name?.split(' (')[0] || 'Forward Base'} ({locElevation}m) Burn Dynamics
                 </div>
               </div>
 
@@ -522,7 +616,7 @@ export default function App() {
                   {pendingIndents} <small className="text-xs font-normal text-gray-500 font-sans">AWAITING</small>
                 </div>
                 <div className="text-[11px] text-gray-500 font-mono mt-1">
-                  Priority Forward Requisitions
+                  Priority Requisitions for {activeLocation?.name?.split(' ')[0] || 'HQ'}
                 </div>
               </div>
             </section>
@@ -534,6 +628,8 @@ export default function App() {
                 onSelectContainer={() => {}} 
                 onCreateRequisition={handleCreateRequisitionFromForecast}
                 apiBase={API_BASE}
+                activeLocation={activeLocation}
+                onSelectLocation={setActiveLocation}
               />
             )}
 
@@ -542,6 +638,8 @@ export default function App() {
                 apiBase={API_BASE} 
                 user={user} 
                 onCreateRequisition={handleCreateRequisitionFromForecast} 
+                activeLocation={activeLocation}
+                onSelectLocation={setActiveLocation}
               />
             )}
 
@@ -552,6 +650,7 @@ export default function App() {
                 onUpdateStatus={handleUpdateIndentStatus} 
                 user={user}
                 onSwitchUser={handleLogin}
+                activeLocation={activeLocation}
               />
             )}
 
@@ -559,7 +658,9 @@ export default function App() {
               <ConvoyTracker 
                 containers={containers} 
                 apiBase={API_BASE} 
-                onTelemetryUpdate={handleTelemetryUpdate} 
+                onTelemetryUpdate={handleTelemetryUpdate}
+                activeLocation={activeLocation}
+                onSelectLocation={setActiveLocation} 
               />
             )}
           </>
