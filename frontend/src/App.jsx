@@ -18,8 +18,8 @@ import DemandForecast from './components/DemandForecast';
 import Requisitions from './components/Requisitions';
 import ConvoyTracker from './components/ConvoyTracker';
 
-// Relative base ensures seamless operation across localhost, LAN IPs, and Zero Area Networks
-const API_BASE = '';
+// Configurable remote API for Vercel -> Render production deployment, with relative fallback for local dev
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 const DEFAULT_CONTAINERS = [
   {
@@ -163,7 +163,7 @@ export default function App() {
       .catch(() => {});
 
     try {
-      const socket = io({
+      const socket = io(API_BASE || undefined, {
         path: '/socket.io',
         transports: ['websocket', 'polling'],
         reconnectionAttempts: 8,
@@ -533,6 +533,7 @@ export default function App() {
                 containers={containers} 
                 onSelectContainer={() => {}} 
                 onCreateRequisition={handleCreateRequisitionFromForecast}
+                apiBase={API_BASE}
               />
             )}
 

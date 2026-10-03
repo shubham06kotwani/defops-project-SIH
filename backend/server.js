@@ -37,6 +37,16 @@ app.use('/api/v1/indents', require('./routes/api/indents'));
 app.use('/api/v1/forecasting', require('./routes/api/forecasting'));
 app.use('/api/v1/location', require('./routes/api/location'));
 
+// Production Health Check endpoint for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'HEALTHY',
+    system: 'DEFOPS-C4ISR-BACKEND',
+    uptime: Math.round(process.uptime()),
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.post('/api/v1/telemetry', async (req, res, next) => {
   try {
     const iotIngestionService = require('./services/iotIngestionService');

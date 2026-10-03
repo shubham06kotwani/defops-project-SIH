@@ -103,7 +103,7 @@ function computeMGRS(lat, lng) {
   return `43${latBand} LK ${easting} ${northing}`;
 }
 
-export default function TacticalMap({ containers = [], onSelectContainer, onCreateRequisition }) {
+export default function TacticalMap({ containers = [], onSelectContainer, onCreateRequisition, apiBase = '' }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const tileLayerRef = useRef(null);
@@ -186,8 +186,8 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
   const fetchOpenMeteoWeather = async (lat, lng) => {
     setIsWeatherLoading(true);
     try {
-      // First try local proxy
-      const res = await fetch(`/api/v1/location/weather?lat=${lat}&lng=${lng}`);
+      // First try backend route (relative or remote via apiBase)
+      const res = await fetch(`${apiBase}/api/v1/location/weather?lat=${lat}&lng=${lng}`);
       if (res.ok) {
         const data = await res.json();
         setLiveWeather(data);
@@ -327,8 +327,8 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
 
     searchTimeoutRef.current = setTimeout(async () => {
       try {
-        // Query backend proxy
-        const res = await fetch(`/api/v1/location/search?name=${encodeURIComponent(query.trim())}`);
+        // Query backend route (relative or remote via apiBase)
+        const res = await fetch(`${apiBase}/api/v1/location/search?name=${encodeURIComponent(query.trim())}`);
         if (res.ok) {
           const data = await res.json();
           setOpenMeteoResults(data.results || []);

@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: defops-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        sync: false
+      - key: CLIENT_URL
+        sync: false

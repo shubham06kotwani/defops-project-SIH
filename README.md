@@ -76,12 +76,58 @@ npm run build
 
 ## 🔑 Quick Demo Credentials
 
-| Role | Name | Service Number | Password |
-|---|---|---|---|
-| **Officer** | Major Vikram Singh | `IC-10293` | `password123` |
-| **Operator** | Havildar Rajesh Kumar | `OR-88412` | `password123` |
+| Echelon / Role | Name | Service Number | Password | Clearance Level |
+|---|---|---|---|---|
+| **Higher Authority (Commander)** | Brigadier Amitav Sen | `IC-00101` | `password123` | Can Approve/Reject Requisitions |
+| **Forward Post Officer (Requester)** | Major Vikram Singh | `IC-10293` | `password123` | Can Raise Requisitions (Self-Approval Prohibited) |
+| **Field Operator (Requester)** | Havildar Rajesh Kumar | `OR-88412` | `password123` | Can Raise Requisitions & Inject Telemetry |
 
 ---
+
+## 🌐 Production Deployment Guide
+
+### Phase 1: Deploy Backend to **Render**
+
+1. Push your repository to **GitHub**.
+2. Go to your [Render Dashboard](https://dashboard.render.com/) and click **New +** ➔ **Web Service**.
+3. Connect your GitHub repository.
+4. Configure the Web Service settings:
+   - **Name:** `defops-backend`
+   - **Root Directory:** `backend`
+   - **Runtime:** `Node`
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start` (or `node server.js`)
+   - **Plan:** Free
+5. Add the **Environment Variables** in Render:
+   - `NODE_ENV` = `production`
+   - `PORT` = `10000` (Render will assign this automatically)
+   - `JWT_SECRET` = `supersecretmilitarykey2026_change_in_production`
+   - `MONGO_URI` = `mongodb+srv://<user>:<password>@cluster0.mongodb.net/defops?retryWrites=true&w=majority` (Optional: If omitted, backend operates in Zero Area Network in-memory mode)
+   - `CLIENT_URL` = `https://your-frontend.vercel.app` (Can be updated after Vercel deploy)
+6. Under **Advanced**, set **Health Check Path** to:
+   - `/health`
+7. Click **Create Web Service**. Once deployed, copy your backend URL (e.g., `https://defops-backend.onrender.com`).
+
+---
+
+### Phase 2: Deploy Frontend to **Vercel**
+
+1. Go to your [Vercel Dashboard](https://vercel.com/dashboard) and click **Add New...** ➔ **Project**.
+2. Import your GitHub repository.
+3. In the project configuration:
+   - **Framework Preset:** `Vite`
+   - **Root Directory:** Click Edit and select `frontend`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+4. Expand **Environment Variables** and add:
+   - **Key:** `VITE_API_URL`
+   - **Value:** `https://your-backend.onrender.com` (The Render backend URL from Phase 1, **without** trailing slash)
+5. Click **Deploy**.
+6. Once deployed, Vercel gives you your production domain (e.g., `https://defops-frontend.vercel.app`).
+7. *(Optional)* Return to your Render dashboard and set `CLIENT_URL` = `https://your-frontend.vercel.app` for CORS security.
+
+---
+
 
 ## 🗺️ Key Features
 
