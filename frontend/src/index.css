@@ -6,53 +6,160 @@
 
 @layer base {
   body {
-    @apply bg-[#f6f9f7] text-gray-800 font-sans antialiased min-h-screen selection:bg-shady-200 selection:text-shady-900;
+    @apply bg-[#f4f7f5] text-gray-900 font-sans antialiased min-h-screen selection:bg-[#ff6600]/20 selection:text-[#b34700];
+    background-image: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Rajdhani', sans-serif;
-    letter-spacing: 0.02em;
+    font-family: 'Chakra Petch', 'Rajdhani', sans-serif;
+    letter-spacing: 0.03em;
   }
 }
 
-/* Custom scrollbars with shady green accents */
+/* Micro-chamfered edges (tactical corner cutouts) */
+.chamfer-sm {
+  clip-path: polygon(
+    0 8px, 8px 0, 
+    calc(100% - 8px) 0, 100% 8px, 
+    100% calc(100% - 8px), calc(100% - 8px) 100%, 
+    8px 100%, 0 calc(100% - 8px)
+  );
+}
+
+.chamfer-tl-br {
+  clip-path: polygon(
+    0 12px, 12px 0, 
+    100% 0, 100% calc(100% - 12px), 
+    calc(100% - 12px) 100%, 0 100%
+  );
+}
+
+.chamfer-btn {
+  clip-path: polygon(
+    0 0, calc(100% - 8px) 0, 
+    100% 8px, 100% 100%, 
+    8px 100%, 0 calc(100% - 8px)
+  );
+}
+
+/* Tactical HUD Corner Brackets */
+.hud-corner-brackets {
+  position: relative;
+}
+.hud-corner-brackets::before,
+.hud-corner-brackets::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  border-color: #27412e;
+}
+.hud-corner-brackets::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+.hud-corner-brackets::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* Tactical Animations */
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 4s linear infinite;
+}
+
+.animate-hud-pulse {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom Tactical Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f0f5f2;
+  background: #eef3ef;
 }
 ::-webkit-scrollbar-thumb {
   background: #a3c5ae;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2d6a4f;
+  background: #27412e;
 }
 
-/* Clean, crisp Leaflet styling on white & shady green */
-.leaflet-container {
-  font-family: 'Inter', sans-serif !important;
-  background: #eef4f0 !important;
-  border-radius: 0.75rem;
+/* Real-Time Tactical Military GIS Map Styling */
+.dark-tactical-map .leaflet-tile-pane {
+  filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.4) !important;
 }
 
-.leaflet-popup-content-wrapper, .leaflet-popup-tip {
-  background: #ffffff !important;
-  color: #1f2937 !important;
-  border: 1px solid rgba(45, 106, 79, 0.2) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(27, 67, 50, 0.12) !important;
+.satellite-tactical-map .leaflet-tile-pane {
+  filter: contrast(1.18) saturate(1.25) brightness(0.92) !important;
 }
 
-.leaflet-control-zoom a {
-  background: #ffffff !important;
-  color: #1b4332 !important;
-  border-color: #d1e3d6 !important;
+.dark-tactical-map .leaflet-container {
+  background: #080d14 !important;
 }
 
-.leaflet-control-zoom a:hover {
-  background: #f2f7f4 !important;
-  color: #2d6a4f !important;
+.dark-tactical-map .leaflet-popup-content-wrapper, 
+.dark-tactical-map .leaflet-popup-tip {
+  background: #0b1118 !important;
+  color: #e5e7eb !important;
+  border: 1px solid #23354b !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7) !important;
+}
+
+.dark-tactical-map .leaflet-control-zoom a {
+  background: #0f1722 !important;
+  color: #d4b483 !important;
+  border-color: #1e2c3e !important;
+}
+
+.dark-tactical-map .leaflet-control-zoom a:hover {
+  background: #182332 !important;
+  color: #ff6600 !important;
+}
+
+/* Radar Sweep Line Animation */
+@keyframes radar-scan {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.radar-sweep-beam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 600px;
+  margin-top: -300px;
+  margin-left: -300px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(from 0deg, rgba(0, 230, 85, 0.18) 0deg, rgba(0, 230, 85, 0.05) 45deg, transparent 90deg, transparent 360deg);
+  animation: radar-scan 6s linear infinite;
+  z-index: 15;
 }

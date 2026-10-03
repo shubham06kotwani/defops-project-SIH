@@ -1,7 +1,7 @@
 {
-  "name": "defops-project-sih",
+  "name": "defops",
   "version": "1.0.0",
-  "description": "Indian Army - Predictive Logistics & Forward Supply Chain (P-LFSCS)",
+  "description": "DEFOPS - Indian Army Predictive Logistics & Forward Supply Chain",
   "main": "backend/server.js",
   "scripts": {
     "dev": "npm --prefix backend run dev",

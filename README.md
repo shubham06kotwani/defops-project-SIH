@@ -1,4 +1,4 @@
-# Indian Army - Predictive Logistics & Forward Supply Chain (P-LFSCS)
+# DEFOPS - Indian Army Predictive Logistics & Forward Supply Chain
 
 > **Ministry of Defence (MoD)** | **Defence Services Staff College**  
 > **Problem Theme:** Transportation & Logistics (Forward Formations Logistics Assurance)
@@ -9,7 +9,7 @@
 
 Maintaining assured and timely logistics support to forward formations across geographically dispersed, high-altitude, and operationally challenging sectors (such as Northern Command: Leh, Ladakh, Kargil, and Siachen Base Camp) is a critical defence requirement.
 
-**P-LFSCS** integrates AI/ML demand forecasting, GIS-enabled corridor tracking via **OpenStreetMap**, IoT telemetry monitoring, and real-time requisition management into a modern, unified, clean tactical operations portal.
+**DEFOPS** integrates AI/ML demand forecasting, GIS-enabled corridor tracking via **OpenStreetMap**, IoT telemetry monitoring, and real-time requisition management into a modern, unified, clean tactical operations portal.
 
 ---
 

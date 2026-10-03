@@ -1,7 +1,7 @@
 {
-  "name": "defops-tactical-backend",
+  "name": "defops-backend",
   "version": "1.0.0",
-  "description": "Indian Army - Predictive Logistics & Forward Supply Chain Management (P-LFSCS) Backend",
+  "description": "DEFOPS - Indian Army Predictive Logistics & Forward Supply Chain Management Backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

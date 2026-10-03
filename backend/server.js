@@ -62,5 +62,5 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`P-LFSCS Tactical Backend running on port ${PORT}`);
+  console.log(`DEFOPS Tactical Backend running on port ${PORT}`);
 });

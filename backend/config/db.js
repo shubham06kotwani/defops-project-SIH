@@ -7,7 +7,7 @@ const connectDB = async () => {
     console.log(`[DATABASE] MongoDB Connected: ${conn.connection.host}`);
   } catch (err) {
     console.warn(`[WARN] MongoDB not reachable at ${process.env.MONGO_URI || 'default'}: ${err.message}`);
-    console.warn('[INFO] P-LFSCS Tactical Server running in Graceful Fallback / Static Serving mode.');
+    console.warn('[INFO] DEFOPS Tactical Server running in Graceful Fallback / Static Serving mode.');
   }
 };
 

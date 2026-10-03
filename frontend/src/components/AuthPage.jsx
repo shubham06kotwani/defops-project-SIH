@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Shield, Lock, AlertCircle, ArrowRight } from 'lucide-react';
+import { Shield, Lock, AlertCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 
-export default function AuthPage({ onLogin, apiBase }) {
+export default function AuthPage({ onLogin, apiBase, onBack }) {
   const [serviceNumber, setServiceNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -59,11 +59,23 @@ export default function AuthPage({ onLogin, apiBase }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f9f7] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-[#c7ddce] rounded-2xl p-8 shadow-[0_15px_35px_rgba(27,67,50,0.08)] relative overflow-hidden">
+    <div className="min-h-screen bg-[#f4f7f5] flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white border border-[#c8ddcf] rounded-lg p-8 shadow-xl relative overflow-hidden hud-corner-brackets">
         
-        {/* Top Military Forest Green Accent Bar */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#40916c]"></div>
+        {/* Top Military Accent Bar (Deep Olive to Safety Orange to Desert Tan) */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#1c3824] via-[#ff6600] to-[#997746]"></div>
+
+        {/* Back to Dashboard Button */}
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-4 inline-flex items-center gap-1.5 text-xs font-stencil font-bold text-[#1c3824] hover:text-[#ff6600] px-3 py-1.5 rounded bg-[#f0f5f1] hover:bg-[#e2ece5] border border-[#c8ddcf] transition-colors cursor-pointer"
+          >
+            <ArrowLeft size={13} />
+            <span>RETURN TO DASHBOARD</span>
+          </button>
+        )}
 
         {/* Brand Header */}
         <div className="text-center mb-6 pt-1">
@@ -71,24 +83,27 @@ export default function AuthPage({ onLogin, apiBase }) {
             <img 
               src="/logo.jpg" 
               alt="Indian Army Emblem" 
-              className="w-20 h-20 rounded-full border-2 border-[#2d6a4f] shadow-md object-cover mx-auto"
+              className="w-20 h-20 rounded-full border-2 border-[#1c3824] shadow-sm object-cover mx-auto"
             />
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#1b2e1e] border border-[#00e655] flex items-center justify-center">
+              <span className="w-2 h-2 rounded-full bg-[#00e655] animate-pulse"></span>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold tracking-wider text-gray-900 font-tactical">
-            INDIAN ARMY
+          <h1 className="text-3xl font-bold tracking-widest text-gray-900 font-stencil">
+            DEFOPS
           </h1>
-          <p className="text-[#2d6a4f] font-semibold text-sm mt-0.5 tracking-wide">
-            Predictive Logistics & Forward Supply Chain (P-LFSCS)
+          <p className="text-[#1c3824] font-semibold text-xs mt-0.5 tracking-wider uppercase font-mono">
+            Forward Formations Logistics Assurance
           </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Defence Services Staff College &bull; Ministry of Defence
+          <p className="text-[11px] text-gray-500 mt-1 font-sans">
+            Indian Army &bull; Defence Services Staff College &bull; MoD
           </p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-xs">
-            <AlertCircle size={16} className="shrink-0 text-red-500" />
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded text-xs flex items-center gap-2 font-mono">
+            <AlertCircle size={16} className="shrink-0 text-red-600" />
             <span>{error}</span>
           </div>
         )}
@@ -96,8 +111,8 @@ export default function AuthPage({ onLogin, apiBase }) {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-tactical font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-              Military Service Number
+            <label className="block text-xs font-stencil font-bold text-[#1c3824] uppercase tracking-wider mb-1.5">
+              MILITARY SERVICE NUMBER
             </label>
             <div className="relative">
               <input
@@ -106,15 +121,15 @@ export default function AuthPage({ onLogin, apiBase }) {
                 onChange={(e) => setServiceNumber(e.target.value)}
                 placeholder="e.g. IC-10293"
                 required
-                className="w-full bg-[#fbfdfc] border border-gray-300 focus:border-[#2d6a4f] focus:ring-2 focus:ring-emerald-100 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm font-mono outline-none transition-all shadow-xs"
+                className="w-full bg-[#f8faf8] border border-[#c8ddcf] focus:border-[#ff6600] text-gray-900 rounded px-3.5 py-2.5 text-xs font-mono outline-none transition-all placeholder:text-gray-400"
               />
-              <Shield className="absolute right-3 top-3 text-emerald-600/50" size={16} />
+              <Shield className="absolute right-3 top-3 text-[#1c3824]/50" size={16} />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-tactical font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-              Restricted Access Password
+            <label className="block text-xs font-stencil font-bold text-[#1c3824] uppercase tracking-wider mb-1.5">
+              RESTRICTED ACCESS CIPHER / PASSWORD
             </label>
             <div className="relative">
               <input
@@ -123,31 +138,31 @@ export default function AuthPage({ onLogin, apiBase }) {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 required
-                className="w-full bg-[#fbfdfc] border border-gray-300 focus:border-[#2d6a4f] focus:ring-2 focus:ring-emerald-100 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm font-mono outline-none transition-all shadow-xs"
+                className="w-full bg-[#f8faf8] border border-[#c8ddcf] focus:border-[#ff6600] text-gray-900 rounded px-3.5 py-2.5 text-xs font-mono outline-none transition-all placeholder:text-gray-400"
               />
-              <Lock className="absolute right-3 top-3 text-emerald-600/50" size={16} />
+              <Lock className="absolute right-3 top-3 text-[#1c3824]/50" size={16} />
             </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#2d6a4f] hover:bg-[#1b4332] disabled:bg-emerald-900 text-white font-tactical font-bold text-lg py-2.5 rounded-lg tracking-wider flex items-center justify-center gap-2 transition-all shadow-md mt-2"
+            className="w-full bg-[#ff6600] hover:bg-[#e65100] disabled:bg-gray-400 text-white font-stencil font-bold text-sm py-2.5 rounded tracking-widest flex items-center justify-center gap-2 transition-all shadow-xs mt-2 cursor-pointer"
           >
             {loading ? (
-              <span>VERIFYING CREDENTIALS...</span>
+              <span>VERIFYING CRYPTO TOKEN...</span>
             ) : (
               <>
-                <span>SECURE SIGN IN</span>
-                <ArrowRight size={18} />
+                <span>AUTHORIZE MILITARY SIGN IN</span>
+                <ArrowRight size={16} />
               </>
             )}
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-gray-100 text-center">
-          <p className="text-[11px] font-mono text-gray-500">
-            🔒 RESTRICTED DEFENCE NETWORK // AUTHORIZED PERSONNEL ONLY
+        <div className="mt-6 pt-4 border-t border-gray-200 text-center">
+          <p className="text-[10px] font-mono text-gray-500">
+            🔒 SEC-LEVEL 4 // RESTRICTED MILITARY NETWORK // AUDIT LOGGED
           </p>
         </div>
 
