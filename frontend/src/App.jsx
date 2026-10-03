@@ -310,6 +310,11 @@ export default function App() {
   // 2. Dynamic Cold Chain & Temperature Hazard
   const isFreezingRisk = locTemp !== undefined && locTemp < -10;
   const isHeatRisk = locTemp !== undefined && locTemp > 25;
+  const locThermalStatus = isFreezingRisk 
+    ? `SUB-ZERO FREEZE ALERT (${locTemp}°C)` 
+    : isHeatRisk 
+    ? `HEAT RISK (${locTemp}°C)` 
+    : `OPTIMAL NOMINAL (${locTemp !== undefined ? `${locTemp}°C` : '16°C'})`;
 
   return (
     <div className="min-h-screen bg-[#f4f7f5] text-gray-900 flex flex-col font-sans">

@@ -127,60 +127,7 @@ export default function TacticalMap({
   const [liveWeather, setLiveWeather] = useState(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(false);
 
-  // 1. Initialize Leaflet Map
-  useEffect(() => {
-    if (!mapContainerRef.current) return;
-
-    if (!mapRef.current) {
-      const map = L.map(mapContainerRef.current, {
-        center: [34.35, 76.95],
-        zoom: 8,
-        minZoom: 6,
-        maxZoom: 18,
-        zoomControl: true
-      });
-
-      // Supply Corridors with clean glowing line
-      STRATEGIC_CORRIDORS.forEach(route => {
-        L.polyline(route.points, {
-          color: route.color,
-          weight: 4.5,
-          opacity: 0.9,
-          dashArray: '8, 8'
-        }).addTo(map).bindTooltip(
-          `<div style="font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:bold; color:#d4b483; background:#0d121a; padding:4px 8px; border:1px solid ${route.color}; border-radius:4px; box-shadow:0 0 10px rgba(0,0,0,0.6);">${route.name}</div>`, 
-          { sticky: true }
-        );
-      });
-
-      // Strategic Passes & Landmarks
-      STRATEGIC_LOCATIONS.forEach(loc => {
-        const passIcon = L.divIcon({
-          className: 'tactical-strategic-pin',
-          html: `<div style="background:#0f1722; color:#d4b483; font-family:'JetBrains Mono',monospace; font-weight:bold; font-size:10px; padding:3px 8px; border-radius:4px; border:1px solid #d4b483; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.5); cursor:pointer;">⛰️ ${loc.name.split(' (')[0]}</div>`,
-          iconSize: [130, 24],
-          iconAnchor: [65, 12]
-        });
-        
-        const m = L.marker([loc.lat, loc.lng], { icon: passIcon }).addTo(map);
-        m.on('click', () => {
-          fetchLocationCoordinates(loc.lat, loc.lng, loc.name, loc.elev);
-        });
-      });
-
-      // INTERACTIVE CLICK LOCATION FETCHER: Click anywhere on map to fetch desired location dynamically from Open-Meteo
-      map.on('click', (e) => {
-        fetchLocationCoordinates(e.latlng.lat, e.latlng.lng);
-      });
-
-      mapRef.current = map;
-      
-      // Auto-fetch default initial location telemetry (Leh HQ) from Open-Meteo
-      fetchLocationCoordinates(34.1526, 77.5771, 'Leh Forward Depot & Airbase', 3500);
-    }
-  }, []);
-
-  // 2. Dynamic Open-Meteo Weather Fetcher for any coordinate
+  // 1. Dynamic Open-Meteo Weather Fetcher for any coordinate
   const fetchOpenMeteoWeather = async (lat, lng) => {
     setIsWeatherLoading(true);
     try {
@@ -233,7 +180,7 @@ export default function TacticalMap({
     return null;
   };
 
-  // 3. Main Location Fetcher Function: Sets coordinates and extracts dynamic telemetry
+  // 2. Main Location Fetcher Function: Sets coordinates and extracts dynamic telemetry
   const fetchLocationCoordinates = async (lat, lng, label = null, elevation = null) => {
     const roundedLat = parseFloat(Number(lat).toFixed(5));
     const roundedLng = parseFloat(Number(lng).toFixed(5));
@@ -322,6 +269,59 @@ export default function TacticalMap({
       onSelectLocation(resolvedFullTarget);
     }
   };
+
+  // 3. Initialize Leaflet Map
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+
+    if (!mapRef.current) {
+      const map = L.map(mapContainerRef.current, {
+        center: [34.35, 76.95],
+        zoom: 8,
+        minZoom: 6,
+        maxZoom: 18,
+        zoomControl: true
+      });
+
+      // Supply Corridors with clean glowing line
+      STRATEGIC_CORRIDORS.forEach(route => {
+        L.polyline(route.points, {
+          color: route.color,
+          weight: 4.5,
+          opacity: 0.9,
+          dashArray: '8, 8'
+        }).addTo(map).bindTooltip(
+          `<div style="font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:bold; color:#d4b483; background:#0d121a; padding:4px 8px; border:1px solid ${route.color}; border-radius:4px; box-shadow:0 0 10px rgba(0,0,0,0.6);">${route.name}</div>`, 
+          { sticky: true }
+        );
+      });
+
+      // Strategic Passes & Landmarks
+      STRATEGIC_LOCATIONS.forEach(loc => {
+        const passIcon = L.divIcon({
+          className: 'tactical-strategic-pin',
+          html: `<div style="background:#0f1722; color:#d4b483; font-family:'JetBrains Mono',monospace; font-weight:bold; font-size:10px; padding:3px 8px; border-radius:4px; border:1px solid #d4b483; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.5); cursor:pointer;">⛰️ ${loc.name.split(' (')[0]}</div>`,
+          iconSize: [130, 24],
+          iconAnchor: [65, 12]
+        });
+        
+        const m = L.marker([loc.lat, loc.lng], { icon: passIcon }).addTo(map);
+        m.on('click', () => {
+          fetchLocationCoordinates(loc.lat, loc.lng, loc.name, loc.elev);
+        });
+      });
+
+      // INTERACTIVE CLICK LOCATION FETCHER: Click anywhere on map to fetch desired location dynamically from Open-Meteo
+      map.on('click', (e) => {
+        fetchLocationCoordinates(e.latlng.lat, e.latlng.lng);
+      });
+
+      mapRef.current = map;
+      
+      // Auto-fetch default initial location telemetry (Leh HQ) from Open-Meteo
+      fetchLocationCoordinates(34.1526, 77.5771, 'Leh Forward Depot & Airbase', 3500);
+    }
+  }, []);
 
   // Fly camera to manual target coordinates
   const handleGoToCoords = (e) => {
