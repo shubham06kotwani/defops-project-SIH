@@ -9,6 +9,7 @@ const { initMQTT } = require('./config/mqtt');
 const errorHandler = require('./middleware/errorHandler');
 
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
@@ -66,7 +67,14 @@ if (process.env.MQTT_BROKER_URL) {
 
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  const frontendIndex = path.join(__dirname, '../frontend/dist/index.html');
+  if (fs.existsSync(frontendIndex)) {
+    return res.sendFile(frontendIndex);
+  }
+  res.status(200).json({
+    status: 'ONLINE',
+    message: 'DEFOPS Tactical Backend API is active. Access endpoints via /api/v1/... or check /health.'
+  });
 });
 
 app.use(errorHandler);
