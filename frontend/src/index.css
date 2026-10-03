@@ -107,16 +107,23 @@
 }
 
 /* Real-Time Tactical Military GIS Map Styling */
+.real-gis-map .leaflet-tile-pane {
+  /* Natural map rendering - crisp, legible and realistic */
+  filter: none !important;
+}
+
 .dark-tactical-map .leaflet-tile-pane {
-  filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.4) !important;
+  /* Subtle tactical contrast without distorting roads or terrain */
+  filter: contrast(1.05) brightness(0.98) !important;
 }
 
 .satellite-tactical-map .leaflet-tile-pane {
-  filter: contrast(1.18) saturate(1.25) brightness(0.92) !important;
+  filter: contrast(1.1) saturate(1.15) brightness(0.96) !important;
 }
 
-.dark-tactical-map .leaflet-container {
-  background: #080d14 !important;
+.leaflet-container {
+  background: #0f1722 !important;
+  font-family: inherit;
 }
 
 .dark-tactical-map .leaflet-popup-content-wrapper, 

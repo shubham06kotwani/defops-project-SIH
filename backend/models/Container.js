@@ -10,9 +10,14 @@ const ContainerSchema = new mongoose.Schema({
   sensors: {
     temperature: Number,
     humidity: Number,
-    battery: Number
+    battery: Number,
+    tamper: { type: Boolean, default: false }
   },
-  status: { type: String, enum: ['NORMAL', 'COLD_CHAIN_BREACH', 'TAMPERED'], default: 'NORMAL' },
+  status: { 
+    type: String, 
+    enum: ['NORMAL', 'COLD_CHAIN_BREACH', 'FREEZING_BREACH', 'TAMPERED', 'BATTERY_CRITICAL', 'HUMIDITY_EXCESS'], 
+    default: 'NORMAL' 
+  },
   history: [{
     coordinates: [Number],
     temperature: Number,

@@ -18,7 +18,8 @@ import DemandForecast from './components/DemandForecast';
 import Requisitions from './components/Requisitions';
 import ConvoyTracker from './components/ConvoyTracker';
 
-const API_BASE = window.location.port === '5000' ? '' : 'http://localhost:5000';
+// Relative base ensures seamless operation across localhost, LAN IPs, and Zero Area Networks
+const API_BASE = '';
 
 const DEFAULT_CONTAINERS = [
   {
@@ -58,19 +59,42 @@ const DEFAULT_CONTAINERS = [
 const DEFAULT_INDENTS = [
   {
     _id: 'IND-901',
-    unitName: 'Forward Post 42 (Kargil)',
+    unitName: 'Forward Post 42 (Kargil Axis)',
     category: 'AMMUNITION',
     quantity: 500,
     priority: 'CRITICAL',
-    status: 'PENDING'
+    status: 'PENDING',
+    requestedBy: {
+      serviceNumber: 'OR-88412',
+      name: 'Havildar Rajesh Kumar',
+      rank: 'HAVILDAR',
+      role: 'OPERATOR'
+    },
+    approvedBy: null,
+    createdAt: new Date(Date.now() - 3600000).toISOString()
   },
   {
     _id: 'IND-902',
-    unitName: 'Siachen Sector Depot',
+    unitName: 'Siachen Sector Glacier Depot',
     category: 'RATIONS',
     quantity: 1200,
     priority: 'HIGH',
-    status: 'APPROVED'
+    status: 'APPROVED',
+    requestedBy: {
+      serviceNumber: 'IC-10293',
+      name: 'Major Vikram Singh',
+      rank: 'MAJOR',
+      role: 'OFFICER'
+    },
+    approvedBy: {
+      serviceNumber: 'IC-00101',
+      name: 'Brigadier Amitav Sen',
+      rank: 'BRIGADIER',
+      role: 'COMMANDER',
+      timestamp: new Date(Date.now() - 1800000).toISOString(),
+      remarks: 'Operational requirement verified. Winter ration reserve release approved.'
+    },
+    createdAt: new Date(Date.now() - 7200000).toISOString()
   },
   {
     _id: 'IND-903',
@@ -78,7 +102,22 @@ const DEFAULT_INDENTS = [
     category: 'FOL',
     quantity: 3500,
     priority: 'HIGH',
-    status: 'DISPATCHED'
+    status: 'DISPATCHED',
+    requestedBy: {
+      serviceNumber: 'OR-88412',
+      name: 'Havildar Rajesh Kumar',
+      rank: 'HAVILDAR',
+      role: 'OPERATOR'
+    },
+    approvedBy: {
+      serviceNumber: 'IC-00101',
+      name: 'Brigadier Amitav Sen',
+      rank: 'BRIGADIER',
+      role: 'COMMANDER',
+      timestamp: new Date(Date.now() - 5400000).toISOString(),
+      remarks: 'Convoy supply clearance granted for Zoji La corridor.'
+    },
+    createdAt: new Date(Date.now() - 10800000).toISOString()
   }
 ];
 
@@ -124,8 +163,13 @@ export default function App() {
       .catch(() => {});
 
     try {
-      const socket = io(API_BASE || window.location.origin, {
-        transports: ['websocket', 'polling']
+      const socket = io({
+        path: '/socket.io',
+        transports: ['websocket', 'polling'],
+        reconnectionAttempts: 8,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 4000,
+        timeout: 5000
       });
 
       socket.on('connect', () => setConnected(true));
@@ -166,8 +210,38 @@ export default function App() {
     setIndents(prev => [{ ...newIndent, _id: 'IND-' + Date.now().toString().slice(-4), status: 'PENDING' }, ...prev]);
   };
 
-  const handleUpdateIndentStatus = (indentId, newStatus) => {
-    setIndents(prev => prev.map(i => i._id === indentId ? { ...i, status: newStatus } : i));
+  const handleUpdateIndentStatus = async (indentId, newStatus, remarks = '') => {
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/indents/${indentId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: newStatus,
+          remarks,
+          user: user || {
+            serviceNumber: 'IC-00101',
+            name: 'Brigadier Amitav Sen',
+            rank: 'BRIGADIER',
+            role: 'COMMANDER'
+          }
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || data.error || 'Requisition status update failed');
+      }
+
+      setIndents(prev => prev.map(i => (i._id === indentId ? data : i)));
+      return data;
+    } catch (err) {
+      console.warn('Update indent status:', err.message);
+      // Fallback local update if network is offline and not an auth error
+      if (!err.message?.includes('Violation') && !err.message?.includes('DENIED') && !err.message?.includes('Prohibited')) {
+        setIndents(prev => prev.map(i => i._id === indentId ? { ...i, status: newStatus } : i));
+      }
+      throw err;
+    }
   };
 
   const handleTelemetryUpdate = (updatedContainer) => {
@@ -192,6 +266,7 @@ export default function App() {
     });
   };
 
+  const anomalyCount = containers.filter(c => c.status && c.status !== 'NORMAL').length;
   const breachCount = containers.filter(c => c.status === 'COLD_CHAIN_BREACH').length;
   const pendingIndents = indents.filter(i => i.status === 'PENDING').length;
 
@@ -299,9 +374,9 @@ export default function App() {
           >
             <Truck size={14} />
             <span>IOT TRACKER</span>
-            {breachCount > 0 && (
+            {anomalyCount > 0 && (
               <span className="bg-red-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold animate-pulse">
-                {breachCount}
+                {anomalyCount}
               </span>
             )}
           </button>
@@ -457,6 +532,7 @@ export default function App() {
               <TacticalMap 
                 containers={containers} 
                 onSelectContainer={() => {}} 
+                onCreateRequisition={handleCreateRequisitionFromForecast}
               />
             )}
 
@@ -473,6 +549,8 @@ export default function App() {
                 indents={indents} 
                 onAddIndent={handleAddIndent} 
                 onUpdateStatus={handleUpdateIndentStatus} 
+                user={user}
+                onSwitchUser={handleLogin}
               />
             )}
 

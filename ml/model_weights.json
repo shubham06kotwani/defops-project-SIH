@@ -1,0 +1,16 @@
+{
+  "model": "DEFOPS Ridge Regression Forecaster v2.4",
+  "r2_score": 0.9428,
+  "mae": 8.79,
+  "bias": 33.2935,
+  "weights": {
+    "elevation_meters": 0.008,
+    "ambient_temp_celsius": -1.9369,
+    "terrain_friction": 0.0621,
+    "troop_strength": 0.0443,
+    "is_ammunition": -15.4391,
+    "is_rations": 16.1877,
+    "is_fol": 57.5476,
+    "is_medical": -58.2962
+  }
+}

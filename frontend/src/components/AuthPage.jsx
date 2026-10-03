@@ -34,7 +34,16 @@ export default function AuthPage({ onLogin, apiBase, onBack }) {
         throw new Error(data.error || 'Invalid Military Service Number or Password');
       }
     } catch (err) {
-      if (serviceNumber.trim().toUpperCase() === 'IC-10293' && password === 'password123') {
+      const clean = serviceNumber.trim().toUpperCase();
+      if (clean === 'IC-00101' && password === 'password123') {
+        onLogin({
+          serviceNumber: 'IC-00101',
+          name: 'Brigadier Amitav Sen',
+          rank: 'BRIGADIER',
+          role: 'COMMANDER',
+          token: 'Bearer simulated-token-brig'
+        });
+      } else if (clean === 'IC-10293' && password === 'password123') {
         onLogin({
           serviceNumber: 'IC-10293',
           name: 'Major Vikram Singh',
@@ -42,7 +51,7 @@ export default function AuthPage({ onLogin, apiBase, onBack }) {
           role: 'OFFICER',
           token: 'Bearer simulated-token-maj'
         });
-      } else if (serviceNumber.trim().toUpperCase() === 'OR-88412' && password === 'password123') {
+      } else if (clean === 'OR-88412' && password === 'password123') {
         onLogin({
           serviceNumber: 'OR-88412',
           name: 'Havildar Rajesh Kumar',
@@ -141,6 +150,42 @@ export default function AuthPage({ onLogin, apiBase, onBack }) {
                 className="w-full bg-[#f8faf8] border border-[#c8ddcf] focus:border-[#ff6600] text-gray-900 rounded px-3.5 py-2.5 text-xs font-mono outline-none transition-all placeholder:text-gray-400"
               />
               <Lock className="absolute right-3 top-3 text-[#1c3824]/50" size={16} />
+            </div>
+          </div>
+
+          {/* Quick Military Profile Pre-fills for Testing Chain of Command */}
+          <div className="pt-2">
+            <span className="block text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1.5 text-center font-bold">
+              -- Quick Echelon Profile Sign-in --
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-[11px] font-mono">
+              <button
+                type="button"
+                onClick={() => { setServiceNumber('IC-00101'); setPassword('password123'); }}
+                className="p-1.5 rounded bg-[#f0f6f2] hover:bg-[#e2ece5] text-[#1c3824] border border-[#c8ddcf] text-left transition-all cursor-pointer"
+                title="Higher Authority (Approval Echelon)"
+              >
+                <div className="font-bold text-[10px] text-[#ff6600]">🎖️ HIGHER AUTH</div>
+                <div className="truncate text-[10px]">Brig. Sen</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setServiceNumber('IC-10293'); setPassword('password123'); }}
+                className="p-1.5 rounded bg-[#f0f6f2] hover:bg-[#e2ece5] text-[#1c3824] border border-[#c8ddcf] text-left transition-all cursor-pointer"
+                title="Forward Post Officer (Requester Echelon)"
+              >
+                <div className="font-bold text-[10px] text-[#1c3824]">🪖 FWD OFFICER</div>
+                <div className="truncate text-[10px]">Maj. Singh</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setServiceNumber('OR-88412'); setPassword('password123'); }}
+                className="p-1.5 rounded bg-[#f0f6f2] hover:bg-[#e2ece5] text-[#1c3824] border border-[#c8ddcf] text-left transition-all cursor-pointer"
+                title="Field Operator (Requester Echelon)"
+              >
+                <div className="font-bold text-[10px] text-gray-700">📦 OPERATOR</div>
+                <div className="truncate text-[10px]">Hav. Kumar</div>
+              </button>
             </div>
           </div>
 

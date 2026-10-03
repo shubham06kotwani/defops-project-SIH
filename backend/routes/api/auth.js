@@ -18,6 +18,14 @@ router.post('/login', async (req, res) => {
     }
 
     const DEMO_ACCOUNTS = {
+      'IC-00101': {
+        _id: '660e1d88a1b2c3d4e5f6a700',
+        name: 'Brigadier Amitav Sen',
+        serviceNumber: 'IC-00101',
+        password: 'password123',
+        rank: 'BRIGADIER',
+        role: 'COMMANDER'
+      },
       'IC-10293': {
         _id: '660e1d88a1b2c3d4e5f6a701',
         name: 'Major Vikram Singh',

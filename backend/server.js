@@ -35,6 +35,7 @@ app.use('/api/v1/auth', require('./routes/api/auth'));
 app.use('/api/v1/containers', require('./routes/api/containers'));
 app.use('/api/v1/indents', require('./routes/api/indents'));
 app.use('/api/v1/forecasting', require('./routes/api/forecasting'));
+app.use('/api/v1/location', require('./routes/api/location'));
 
 app.post('/api/v1/telemetry', async (req, res, next) => {
   try {
