@@ -39,11 +39,18 @@ const AIRGAP_TACTICAL_REGISTRY = [
 function fetchHttps(url) {
   return new Promise((resolve, reject) => {
     const req = https.get(url, { headers: { 'User-Agent': 'DEFOPS-Tactical-GIS/1.0' }, timeout: 6000 }, (res) => {
+      if (res.statusCode < 200 || res.statusCode >= 300) {
+        return reject(new Error(`Open-Meteo HTTP ${res.statusCode}`));
+      }
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
-          resolve(JSON.parse(data));
+          const parsed = JSON.parse(data);
+          if (parsed.error) {
+            return reject(new Error(parsed.reason || 'Open-Meteo API returned error'));
+          }
+          resolve(parsed);
         } catch (e) {
           reject(e);
         }
@@ -118,7 +125,10 @@ router.get('/weather', async (req, res) => {
 
   try {
     const data = await fetchHttps(url);
-    const current = data.current || {};
+    if (!data || !data.current || data.current.temperature_2m === undefined) {
+      throw new Error('Incomplete Open-Meteo payload');
+    }
+    const current = data.current;
     const weatherInfo = getWeatherDescription(current.weather_code);
 
     res.json({

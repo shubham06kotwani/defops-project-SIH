@@ -177,41 +177,48 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
   const fetchOpenMeteoWeather = async (lat, lng) => {
     setIsWeatherLoading(true);
     try {
-      // First try backend route (relative or remote via apiBase)
-      const res = await fetch(`${apiBase}/api/v1/location/weather?lat=${lat}&lng=${lng}`);
-      if (res.ok) {
-        const data = await res.json();
-        setLiveWeather(data);
-        return data;
-      }
-      throw new Error('Local route unavailable');
-    } catch {
-      // Direct client-side fallback to Open-Meteo
-      try {
-        const directUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,surface_pressure,weather_code`;
-        const resDirect = await fetch(directUrl);
+      // 1. Direct browser fetch to Open-Meteo (fast & never blocked by cloud server IP rate limits)
+      const directUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,surface_pressure,weather_code`;
+      const resDirect = await fetch(directUrl);
+      if (resDirect.ok) {
         const data = await resDirect.json();
-        const cur = data.current || {};
-        const parsed = {
-          latitude: data.latitude,
-          longitude: data.longitude,
-          elevation: data.elevation ? Math.round(data.elevation) : 3200,
-          current: {
-            temperature: cur.temperature_2m,
-            humidity: cur.relative_humidity_2m,
-            windSpeed: cur.wind_speed_10m,
-            pressure: cur.surface_pressure,
-            weatherCode: cur.weather_code,
-            weatherLabel: cur.weather_code === 0 ? 'Clear Sky' : cur.weather_code < 4 ? 'Partly Cloudy' : cur.weather_code < 70 ? 'Rain' : 'Snowfall',
-            weatherIcon: cur.weather_code === 0 ? '☀️' : cur.weather_code < 70 ? '🌧️' : '❄️',
-            condition: cur.temperature_2m < -5 ? 'CRITICAL' : 'OPTIMAL'
-          },
-          source: 'OPEN_METEO_DIRECT'
-        };
-        setLiveWeather(parsed);
-        return parsed;
+        if (data && data.current && data.current.temperature_2m !== undefined) {
+          const cur = data.current;
+          const parsed = {
+            latitude: data.latitude,
+            longitude: data.longitude,
+            elevation: data.elevation ? Math.round(data.elevation) : 3200,
+            current: {
+              temperature: cur.temperature_2m,
+              humidity: cur.relative_humidity_2m,
+              windSpeed: cur.wind_speed_10m,
+              pressure: cur.surface_pressure,
+              weatherCode: cur.weather_code,
+              weatherLabel: cur.weather_code === 0 ? 'Clear Sky' : cur.weather_code < 4 ? 'Partly Cloudy' : cur.weather_code < 70 ? 'Rain' : 'Snowfall',
+              weatherIcon: cur.weather_code === 0 ? '☀️' : cur.weather_code < 70 ? '🌧️' : '❄️',
+              condition: cur.temperature_2m < -5 ? 'CRITICAL' : 'OPTIMAL'
+            },
+            source: 'OPEN_METEO_DIRECT'
+          };
+          setLiveWeather(parsed);
+          return parsed;
+        }
+      }
+      throw new Error('Direct fetch failed');
+    } catch {
+      // 2. Robust fallback to backend proxy route
+      try {
+        const res = await fetch(`${apiBase}/api/v1/location/weather?lat=${lat}&lng=${lng}`);
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
+          const data = await res.json();
+          if (data && data.current && data.current.temperature !== undefined) {
+            setLiveWeather(data);
+            return data;
+          }
+        }
       } catch (err2) {
-        console.warn('Open-Meteo weather fetch offline fallback:', err2);
+        console.warn('Weather fallback failed:', err2);
       }
     } finally {
       setIsWeatherLoading(false);
