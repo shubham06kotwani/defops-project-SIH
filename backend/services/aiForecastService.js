@@ -11,9 +11,13 @@ const path = require('path');
 
 let trainedWeights = null;
 try {
-  trainedWeights = require('../../ml/model_weights.json');
-} catch (e) {
-  // Embedded fallback weights
+  trainedWeights = require('../ml/model_weights.json');
+} catch (e1) {
+  try {
+    trainedWeights = require('../../ml/model_weights.json');
+  } catch (e2) {
+    // Embedded fallback weights
+  }
 }
 
 // Operational Sector Environmental Matrices
