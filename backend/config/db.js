@@ -5,7 +5,7 @@ const connectDB = async () => {
     // Disable query buffering so unhandled DB calls fail fast instead of hanging HTTP requests
     mongoose.set('bufferCommands', false);
 
-    const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/defops_sih';
+    const uri = process.env.MONGO_URI
     const conn = await mongoose.connect(uri, {
       serverSelectionTimeoutMS: process.env.NODE_ENV === 'production' ? 8000 : 2500,
       connectTimeoutMS: process.env.NODE_ENV === 'production' ? 8000 : 2500
