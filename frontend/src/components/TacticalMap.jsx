@@ -8,7 +8,6 @@ import {
   Mountain, 
   Radio, 
   Crosshair, 
-  Search, 
   Navigation, 
   Copy, 
   Check, 
@@ -20,8 +19,7 @@ import {
   Wind,
   Gauge,
   Sparkles,
-  CloudSun,
-  Loader2
+  CloudSun
 } from 'lucide-react';
 
 const STRATEGIC_CORRIDORS = [
@@ -109,7 +107,6 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
   const tileLayerRef = useRef(null);
   const markersRef = useRef({});
   const targetPinRef = useRef(null);
-  const searchTimeoutRef = useRef(null);
 
   const [selectedNode, setSelectedNode] = useState(null);
   const [mapMode, setMapMode] = useState('STREET'); // 'STREET' | 'SATELLITE' | 'TOPO' | 'OFFLINE'
@@ -120,12 +117,6 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
   const [inputLng, setInputLng] = useState('77.5771');
   const [copied, setCopied] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
-  
-  // Dynamic Open-Meteo Search State
-  const [searchLocationQuery, setSearchLocationQuery] = useState('');
-  const [isSearchingOpenMeteo, setIsSearchingOpenMeteo] = useState(false);
-  const [openMeteoResults, setOpenMeteoResults] = useState([]);
-  const [showSearchResults, setShowSearchResults] = useState(false);
   const [liveWeather, setLiveWeather] = useState(null);
   const [isWeatherLoading, setIsWeatherLoading] = useState(false);
 
@@ -308,71 +299,6 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
         elevation: weatherData.elevation,
         liveWeather: weatherData.current
       }));
-    }
-  };
-
-  // 4. Debounced Dynamic Location Search via Open-Meteo Geocoding
-  const handleLocationSearchChange = (query) => {
-    setSearchLocationQuery(query);
-    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-
-    if (!query || query.trim().length < 2) {
-      setOpenMeteoResults([]);
-      setShowSearchResults(false);
-      return;
-    }
-
-    setIsSearchingOpenMeteo(true);
-    setShowSearchResults(true);
-
-    searchTimeoutRef.current = setTimeout(async () => {
-      try {
-        // Query backend route (relative or remote via apiBase)
-        const res = await fetch(`${apiBase}/api/v1/location/search?name=${encodeURIComponent(query.trim())}`);
-        if (res.ok) {
-          const data = await res.json();
-          setOpenMeteoResults(data.results || []);
-          setIsSearchingOpenMeteo(false);
-          return;
-        }
-        throw new Error('Local search route error');
-      } catch {
-        // Direct browser fallback to Open-Meteo Geocoding API
-        try {
-          const fallbackUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query.trim())}&count=10&language=en&format=json`;
-          const resFallback = await fetch(fallbackUrl);
-          const data = await resFallback.json();
-          const results = (data.results || []).map(r => ({
-            id: r.id,
-            name: r.name,
-            latitude: parseFloat(r.latitude.toFixed(5)),
-            longitude: parseFloat(r.longitude.toFixed(5)),
-            elevation: r.elevation ? Math.round(r.elevation) : null,
-            country: r.country || r.country_code || '',
-            region: r.admin1 || r.admin2 || ''
-          }));
-          setOpenMeteoResults(results);
-        } catch (err2) {
-          console.warn('Open-Meteo fallback search failed:', err2);
-          setOpenMeteoResults([]);
-        } finally {
-          setIsSearchingOpenMeteo(false);
-        }
-      }
-    }, 280);
-  };
-
-  // 5. Select location dynamically extracted from Open-Meteo
-  const handleSelectOpenMeteoLocation = (loc) => {
-    const displayName = `${loc.name}${loc.region ? `, ${loc.region}` : ''}${loc.country ? ` (${loc.country})` : ''}`;
-    setSearchLocationQuery(displayName);
-    setShowSearchResults(false);
-    
-    // Dynamically extracted coordinates from Open-Meteo
-    fetchLocationCoordinates(loc.latitude, loc.longitude, displayName, loc.elevation);
-
-    if (mapRef.current) {
-      mapRef.current.flyTo([loc.latitude, loc.longitude], 12, { duration: 1.5 });
     }
   };
 
@@ -604,70 +530,7 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
           </div>
         </div>
 
-        {/* 1. DYNAMIC SEARCH BAR: Extract coordinates dynamically from Open-Meteo */}
-        <div className="relative mb-3">
-          <label className="block text-[#1c3824] font-stencil font-bold text-xs uppercase tracking-wider mb-1 flex items-center justify-between">
-            <span className="flex items-center gap-1.5">
-              <Search size={13} className="text-[#ff6600]" />
-              SEARCH ANY LOCATION IN OPEN-METEO (DYNAMIC COORDINATE EXTRACTION):
-            </span>
-            <span className="text-[10px] text-gray-500 font-mono font-normal">
-              Type town, forward post, peak or pass name
-            </span>
-          </label>
-
-          <div className="relative">
-            <input
-              type="text"
-              value={searchLocationQuery}
-              onChange={(e) => handleLocationSearchChange(e.target.value)}
-              onFocus={() => { if (openMeteoResults.length > 0) setShowSearchResults(true); }}
-              placeholder="e.g. Kargil, Leh, Siachen, Dras, Srinagar, Manali, Pangong, Gulmarg, Nubra..."
-              className="w-full bg-[#f8faf8] border border-[#c8ddcf] text-gray-900 rounded p-2.5 pl-9 text-xs font-mono outline-none focus:border-[#ff6600] focus:ring-1 focus:ring-[#ff6600]/30 transition-all shadow-inner"
-            />
-            <Search className="absolute left-3 top-3 text-gray-400" size={14} />
-
-            {isSearchingOpenMeteo && (
-              <div className="absolute right-3 top-2.5 flex items-center gap-1.5 text-xs text-gray-500 font-mono">
-                <Loader2 size={13} className="animate-spin text-[#ff6600]" />
-                <span className="text-[11px] text-[#ff6600]">Querying Open-Meteo...</span>
-              </div>
-            )}
-          </div>
-
-          {/* Dynamic Open-Meteo Results Dropdown */}
-          {showSearchResults && openMeteoResults.length > 0 && (
-            <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-[#c8ddcf] rounded-md shadow-xl max-h-64 overflow-y-auto font-mono text-xs">
-              <div className="px-3 py-1.5 bg-[#f0f6f2] border-b border-[#c8ddcf] text-[10px] text-gray-600 font-bold uppercase tracking-wider flex items-center justify-between">
-                <span>EXTRACTED OPEN-METEO LOCATIONS ({openMeteoResults.length})</span>
-                <span className="text-[#ff6600]">CLICK TO EXTRACT COORDS &amp; FLY</span>
-              </div>
-              {openMeteoResults.map((loc) => (
-                <div
-                  key={`${loc.id}-${loc.latitude}-${loc.longitude}`}
-                  onClick={() => handleSelectOpenMeteoLocation(loc)}
-                  className="px-3 py-2 border-b border-gray-100 hover:bg-[#eef5f0] cursor-pointer transition-colors flex items-center justify-between gap-2"
-                >
-                  <div>
-                    <div className="font-bold text-[#1c3824] flex items-center gap-1.5">
-                      <span>📍 {loc.name}</span>
-                      {loc.region && <span className="text-gray-500 font-normal text-[11px]">({loc.region}, {loc.country})</span>}
-                    </div>
-                    <div className="text-[11px] text-gray-600 mt-0.5 flex items-center gap-3">
-                      <span className="text-sky-700 font-bold">LAT: {loc.latitude}°N &bull; LNG: {loc.longitude}°E</span>
-                      {loc.elevation && <span className="text-amber-700">ELEV: {loc.elevation}m</span>}
-                    </div>
-                  </div>
-                  <span className="bg-[#1c3824] text-white text-[9px] px-1.5 py-0.5 rounded font-stencil font-bold">
-                    SELECT
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* 2. Quick Strategic Preset Dropdown & Direct Coordinate Inputs */}
+        {/* 1. Quick Strategic Preset Dropdown & Direct Coordinate Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
           {/* Preset Selector */}
           <div>
@@ -734,7 +597,7 @@ export default function TacticalMap({ containers = [], onSelectContainer, onCrea
           </form>
         </div>
 
-        {/* 3. DYNAMIC OPEN-METEO TARGET ACQUIRED HUD CARD */}
+        {/* 2. DYNAMIC OPEN-METEO TARGET ACQUIRED HUD CARD */}
         {manualTarget && (
           <div className="mt-3 p-3.5 bg-[#f0f6f2] border border-[#c2dcd0] rounded-lg text-xs font-mono">
             {/* Top Bar of Target Card */}
