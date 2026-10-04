@@ -68,8 +68,8 @@ export default function AuthPage({ onLogin, apiBase, onBack }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f7f5] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-[#c8ddcf] rounded-lg p-8 shadow-xl relative overflow-hidden hud-corner-brackets">
+    <div className="min-h-screen bg-[#f4f7f5] flex items-center justify-center p-3 sm:p-4">
+      <div className="w-full max-w-md bg-white border border-[#c8ddcf] rounded-lg p-5 sm:p-8 shadow-xl relative overflow-hidden hud-corner-brackets">
         
         {/* Top Military Accent Bar (Deep Olive to Safety Orange to Desert Tan) */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#1c3824] via-[#ff6600] to-[#997746]"></div>

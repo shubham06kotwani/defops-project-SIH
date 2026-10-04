@@ -220,7 +220,7 @@ export default function ConvoyTracker({ containers, apiBase, onTelemetryUpdate }
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {containers.map((c) => {
             const isAnomaly = c.status !== 'NORMAL';
             const cfg = getStatusConfig(c.status);
@@ -316,86 +316,86 @@ export default function ConvoyTracker({ containers, apiBase, onTelemetryUpdate }
       </div>
 
       {/* Simulator Section - Tactical Cockpit Ground Station */}
-      <div className="bg-white border border-[#c8ddcf] rounded-lg p-5 shadow-xs hud-corner-brackets">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-2 pb-2 border-b border-gray-200">
-          <h3 className="font-stencil font-bold text-lg text-gray-900 flex items-center gap-2">
-            <Radio className="text-[#ff6600] animate-pulse" size={18} />
+      <div className="bg-white border border-[#c8ddcf] rounded-lg p-3.5 sm:p-5 shadow-xs hud-corner-brackets">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-2 mb-2 pb-2 border-b border-gray-200">
+          <h3 className="font-stencil font-bold text-base sm:text-lg text-gray-900 flex items-center gap-2">
+            <Radio className="text-[#ff6600] animate-pulse shrink-0" size={18} />
             <span>MILITARY IOT TELEMETRY &amp; ANOMALY INJECTION TRANSMITTER</span>
           </h3>
 
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono text-gray-600 font-bold">Targeted Outcome:</span>
-            <span className={`px-2.5 py-0.5 rounded text-xs font-mono font-bold uppercase tracking-wider border ${currentConfig.badgeBg}`}>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[11px] sm:text-xs font-mono text-gray-600 font-bold">Targeted Outcome:</span>
+            <span className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider border ${currentConfig.badgeBg}`}>
               {predictedCurrentStatus} &bull; {currentConfig.label}
             </span>
           </div>
         </div>
 
-        <p className="text-xs text-gray-600 mb-4 font-sans">
+        <p className="text-xs text-gray-600 mb-4 font-sans leading-relaxed">
           Simulate multi-sensor telemetry conditions across forward logistics corridors. Test automated triggers for <strong>Heat Cold-Chain Breach (&gt;25°C)</strong>, <strong>Sub-Zero Freeze (&lt;-10°C)</strong>, <strong>Physical Tamper / Cargo Seal Rupture</strong>, <strong>Depleted Battery (&le;20%)</strong>, or <strong>High Condensation (&ge;75%)</strong>.
         </p>
 
         {/* Quick Simulation Presets Bar */}
-        <div className="bg-[#f7faf8] border border-[#d6e5db] rounded p-3 mb-5">
+        <div className="bg-[#f7faf8] border border-[#d6e5db] rounded p-2.5 sm:p-3 mb-5">
           <div className="text-[11px] font-stencil font-bold text-[#1c3824] tracking-wider uppercase mb-2 flex items-center gap-1.5">
             <Zap size={14} className="text-[#ff6600]" />
             <span>ONE-CLICK TACTICAL SCENARIO PRESETS:</span>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={() => applyPreset('NOMINAL')}
               disabled={transmitting}
-              className="px-3 py-1.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-xs font-mono font-bold border border-emerald-300 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-[11px] sm:text-xs font-mono font-bold border border-emerald-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <CheckCircle2 size={13} />
-              <span>🟢 Nominal (20°C / Normal)</span>
+              <CheckCircle2 size={13} className="shrink-0" />
+              <span>🟢 Nominal (20°C)</span>
             </button>
 
             <button
               type="button"
               onClick={() => applyPreset('HEAT_BREACH')}
               disabled={transmitting}
-              className="px-3 py-1.5 rounded bg-red-100 hover:bg-red-200 text-red-900 text-xs font-mono font-bold border border-red-300 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 rounded bg-red-100 hover:bg-red-200 text-red-900 text-[11px] sm:text-xs font-mono font-bold border border-red-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <span>🔥 Heat Breach (28.5°C)</span>
+              <span>🔥 Heat (28.5°C)</span>
             </button>
 
             <button
               type="button"
               onClick={() => applyPreset('FREEZE_BREACH')}
               disabled={transmitting}
-              className="px-3 py-1.5 rounded bg-sky-100 hover:bg-sky-200 text-sky-900 text-xs font-mono font-bold border border-sky-300 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 rounded bg-sky-100 hover:bg-sky-200 text-sky-900 text-[11px] sm:text-xs font-mono font-bold border border-sky-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <span>❄️ Sub-Zero Freeze (-15°C)</span>
+              <span>❄️ Freeze (-15°C)</span>
             </button>
 
             <button
               type="button"
               onClick={() => applyPreset('TAMPER')}
               disabled={transmitting}
-              className="px-3 py-1.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-mono font-bold border border-amber-300 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 text-[11px] sm:text-xs font-mono font-bold border border-amber-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <Unlock size={13} />
-              <span>⚠️ Tamper / Door Breach</span>
+              <Unlock size={13} className="shrink-0" />
+              <span>⚠️ Tamper / Door</span>
             </button>
 
             <button
               type="button"
               onClick={() => applyPreset('LOW_BATT')}
               disabled={transmitting}
-              className="px-3 py-1.5 rounded bg-orange-100 hover:bg-orange-200 text-orange-900 text-xs font-mono font-bold border border-orange-300 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 rounded bg-orange-100 hover:bg-orange-200 text-orange-900 text-[11px] sm:text-xs font-mono font-bold border border-orange-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <span>🪫 Low Battery (14%)</span>
+              <span>🪫 Low Batt (14%)</span>
             </button>
 
             <button
               type="button"
               onClick={() => applyPreset('HIGH_HUMID')}
               disabled={transmitting}
-              className="px-3 py-1.5 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-900 text-xs font-mono font-bold border border-indigo-300 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-900 text-[11px] sm:text-xs font-mono font-bold border border-indigo-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <span>💧 High Moisture (88%)</span>
+              <span>💧 Moisture (88%)</span>
             </button>
           </div>
         </div>
@@ -495,18 +495,18 @@ export default function ConvoyTracker({ containers, apiBase, onTelemetryUpdate }
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-stretch gap-3 pt-3 border-t border-gray-200">
             <div 
-              className="text-xs font-mono text-[#1c3824] font-semibold" 
+              className="text-xs font-mono text-[#1c3824] font-semibold break-words" 
               dangerouslySetInnerHTML={{ __html: simStatus || `Selected configuration generates: <strong>${predictedCurrentStatus}</strong>` }}
             ></div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <button
                 type="button"
                 onClick={() => applyPreset('NOMINAL')}
                 disabled={transmitting}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-stencil font-bold text-xs tracking-wider px-3.5 py-2.5 rounded flex items-center gap-1.5 border border-gray-300 transition-all cursor-pointer"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-stencil font-bold text-xs tracking-wider px-3.5 py-2.5 rounded flex items-center justify-center gap-1.5 border border-gray-300 transition-all cursor-pointer w-full sm:w-auto"
                 title="Reset target container back to normal parameters"
               >
                 <RotateCcw size={13} />
@@ -516,10 +516,10 @@ export default function ConvoyTracker({ containers, apiBase, onTelemetryUpdate }
               <button
                 type="submit"
                 disabled={transmitting}
-                className="bg-[#ff6600] hover:bg-[#e65100] text-white font-stencil font-bold text-xs tracking-wider px-5 py-2.5 rounded flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                className="bg-[#ff6600] hover:bg-[#e65100] text-white font-stencil font-bold text-xs tracking-wider px-5 py-2.5 rounded flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer w-full sm:w-auto"
               >
                 <Send size={14} />
-                <span>{transmitting ? 'TRANSMITTING SATCOM PACKET...' : 'TRANSMIT TELEMETRY PACKET'}</span>
+                <span>{transmitting ? 'TRANSMITTING...' : 'TRANSMIT TELEMETRY PACKET'}</span>
               </button>
             </div>
           </div>

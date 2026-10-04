@@ -524,25 +524,25 @@ export default function TacticalMap({
   return (
     <div className="space-y-4">
       {/* DYNAMIC OPEN-METEO LOCATION FETCHER & GEOGRAPHIC TARGETING CONSOLE */}
-      <div className="bg-white border border-[#c8ddcf] rounded-lg p-4 shadow-xs hud-corner-brackets">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-3 pb-3 border-b border-gray-200">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Crosshair className="text-[#ff6600]" size={18} />
-            <h3 className="font-stencil font-bold text-sm text-gray-900 tracking-wider uppercase">
+      <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 sm:p-4 shadow-xs hud-corner-brackets">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3 pb-3 border-b border-gray-200">
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
+            <Crosshair className="text-[#ff6600] shrink-0" size={18} />
+            <h3 className="font-stencil font-bold text-xs sm:text-sm text-gray-900 tracking-wider uppercase truncate">
               OPEN-METEO DYNAMIC LOCATION FETCHER &bull; GEOGRAPHIC TARGETING
             </h3>
-            <span className="bg-[#1c3824] text-white text-[10px] font-mono px-2 py-0.5 rounded font-bold flex items-center gap-1">
+            <span className="bg-[#1c3824] text-white text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded font-bold flex items-center gap-1 shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00e655] animate-ping"></span>
-              DYNAMIC COORDINATE EXTRACTION ACTIVE
+              DYNAMIC GPS ACTIVE
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               type="button"
               onClick={handleGetDeviceLocation}
               disabled={geoLocating}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#f0f5f1] hover:bg-[#e2ece5] text-[#1c3824] border border-[#c8ddcf] text-xs font-mono font-bold transition-all cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded bg-[#f0f5f1] hover:bg-[#e2ece5] text-[#1c3824] border border-[#c8ddcf] text-xs font-mono font-bold transition-all cursor-pointer shadow-2xs"
               title="Fetch current physical device GPS location"
             >
               <Compass size={13} className={geoLocating ? 'animate-spin text-[#ff6600]' : ''} />
@@ -581,8 +581,8 @@ export default function TacticalMap({
           </div>
 
           {/* Manual Coordinate Inputs with Dynamic Open-Meteo Weather Fetching */}
-          <form onSubmit={handleGoToCoords} className="md:col-span-2 flex flex-wrap items-end gap-2">
-            <div className="flex-1 min-w-[120px]">
+          <form onSubmit={handleGoToCoords} className="md:col-span-2 flex flex-col sm:flex-row items-stretch sm:items-end gap-2">
+            <div className="flex-1 min-w-0">
               <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1">
                 Dynamic Latitude (°N):
               </label>
@@ -595,7 +595,7 @@ export default function TacticalMap({
               />
             </div>
 
-            <div className="flex-1 min-w-[120px]">
+            <div className="flex-1 min-w-0">
               <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1">
                 Dynamic Longitude (°E):
               </label>
@@ -610,54 +610,56 @@ export default function TacticalMap({
 
             <button
               type="submit"
-              className="bg-[#1c3824] hover:bg-[#284f33] text-white font-stencil font-bold text-xs tracking-wider px-4 py-2 rounded flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+              className="bg-[#1c3824] hover:bg-[#284f33] text-white font-stencil font-bold text-xs tracking-wider px-4 py-2 rounded flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
             >
               <Navigation size={13} />
-              <span>FLY &amp; QUERY OPEN-METEO</span>
+              <span>FLY &amp; QUERY</span>
             </button>
           </form>
         </div>
 
         {/* 2. DYNAMIC OPEN-METEO TARGET ACQUIRED HUD CARD */}
         {manualTarget && (
-          <div className="mt-3 p-3.5 bg-[#f0f6f2] border border-[#c2dcd0] rounded-lg text-xs font-mono">
+          <div className="mt-3 p-3 sm:p-3.5 bg-[#f0f6f2] border border-[#c2dcd0] rounded-lg text-xs font-mono">
             {/* Top Bar of Target Card */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-2.5 border-b border-[#c2dcd0]/80">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">📍</span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-stencil font-bold text-sm text-[#1c3824]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2.5 border-b border-[#c2dcd0]/80">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-xl sm:text-2xl shrink-0">📍</span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-stencil font-bold text-xs sm:text-sm text-[#1c3824] truncate">
                       {manualTarget.name}
                     </span>
-                    <span className="bg-[#1c3824] text-[#00e655] text-[10px] font-mono px-2 py-0.5 rounded font-bold">
+                    <span className="bg-[#1c3824] text-[#00e655] text-[9px] sm:text-[10px] font-mono px-1.5 sm:px-2 py-0.5 rounded font-bold shrink-0">
                       OPEN-METEO SYNCED
                     </span>
                   </div>
-                  <div className="text-gray-700 flex flex-wrap items-center gap-3 text-[11px] mt-0.5">
-                    <span className="text-sky-800 font-bold">
-                      LAT: <strong>{manualTarget.lat}°N</strong> &bull; LNG: <strong>{manualTarget.lng}°E</strong>
+                  <div className="text-gray-700 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] mt-1">
+                    <span className="bg-sky-50 text-sky-800 px-1.5 py-0.5 rounded border border-sky-200">
+                      LAT: <strong>{manualTarget.lat}°N</strong>
                     </span>
-                    <span>&bull;</span>
-                    <span>MGRS: <strong>{manualTarget.mgrs}</strong></span>
-                    <span>&bull;</span>
-                    <span className="text-amber-800 font-bold">
-                      ELEVATION: <strong>{manualTarget.elevation}m</strong>
+                    <span className="bg-sky-50 text-sky-800 px-1.5 py-0.5 rounded border border-sky-200">
+                      LNG: <strong>{manualTarget.lng}°E</strong>
                     </span>
-                    <span>&bull;</span>
-                    <span className="text-gray-600">
-                      Distance: <strong>{manualTarget.distanceKm} km from {manualTarget.closestBase}</strong>
+                    <span className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded border border-gray-200">
+                      MGRS: <strong>{manualTarget.mgrs}</strong>
+                    </span>
+                    <span className="bg-amber-50 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200">
+                      ELEV: <strong>{manualTarget.elevation}m</strong>
+                    </span>
+                    <span className="text-gray-600 text-[10px]">
+                      ({manualTarget.distanceKm} km from {manualTarget.closestBase})
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <button
                   type="button"
                   onClick={handleCopyCoords}
-                  className="px-2.5 py-1.5 rounded bg-white hover:bg-gray-100 text-gray-800 border border-[#c8ddcf] text-[11px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer"
+                  className="px-2.5 py-1.5 rounded bg-white hover:bg-gray-100 text-gray-800 border border-[#c8ddcf] text-[11px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
                   title="Copy dynamic coordinates to clipboard"
                 >
                   {copied ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
@@ -668,17 +670,17 @@ export default function TacticalMap({
                   <button
                     type="button"
                     onClick={() => onCreateRequisition('AMMUNITION', 500, manualTarget)}
-                    className="px-3 py-1.5 rounded bg-[#ff6600] hover:bg-[#e65100] text-white text-[11px] font-stencil font-bold tracking-wider flex items-center gap-1 shadow-xs transition-all cursor-pointer"
+                    className="flex-1 sm:flex-initial px-3 py-1.5 rounded bg-[#ff6600] hover:bg-[#e65100] text-white text-[11px] font-stencil font-bold tracking-wider flex items-center justify-center gap-1 shadow-xs transition-all cursor-pointer"
                   >
                     <Box size={12} />
-                    <span>DISPATCH SUPPLY HERE</span>
+                    <span>DISPATCH HERE</span>
                   </button>
                 )}
 
                 <button
                   type="button"
                   onClick={handleClearPin}
-                  className="p-1.5 rounded bg-white hover:bg-red-50 text-gray-400 hover:text-red-600 border border-[#c8ddcf] transition-all cursor-pointer"
+                  className="p-1.5 rounded bg-white hover:bg-red-50 text-gray-400 hover:text-red-600 border border-[#c8ddcf] transition-all cursor-pointer shrink-0"
                   title="Remove pinpoint"
                 >
                   <X size={14} />
@@ -689,17 +691,17 @@ export default function TacticalMap({
             {/* Live Meteorological Data Telemetry Panel (Extracted from Open-Meteo) */}
             <div className="mt-2.5 pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
               {/* Temperature */}
-              <div className="bg-white p-2.5 rounded border border-[#c8ddcf] flex items-center gap-2.5 shadow-2xs">
-                <div className={`p-1.5 rounded ${
+              <div className="bg-white p-2 sm:p-2.5 rounded border border-[#c8ddcf] flex items-center gap-2 shadow-2xs min-w-0">
+                <div className={`p-1.5 rounded shrink-0 ${
                   (liveWeather?.current?.temperature ?? 0) < 0 
                     ? 'bg-sky-50 text-sky-600' 
                     : 'bg-amber-50 text-amber-600'
                 }`}>
                   <Thermometer size={16} />
                 </div>
-                <div>
-                  <div className="text-[10px] text-gray-500 font-stencil font-bold uppercase">AMBIENT TEMP</div>
-                  <div className="font-bold text-gray-900 text-sm">
+                <div className="min-w-0">
+                  <div className="text-[9px] sm:text-[10px] text-gray-500 font-stencil font-bold uppercase truncate">AMBIENT TEMP</div>
+                  <div className="font-bold text-gray-900 text-xs sm:text-sm truncate">
                     {isWeatherLoading ? (
                       <span className="text-gray-400 text-xs">Querying...</span>
                     ) : (
@@ -710,13 +712,13 @@ export default function TacticalMap({
               </div>
 
               {/* Weather Condition */}
-              <div className="bg-white p-2.5 rounded border border-[#c8ddcf] flex items-center gap-2.5 shadow-2xs">
-                <div className="p-1.5 rounded bg-emerald-50 text-emerald-600">
+              <div className="bg-white p-2 sm:p-2.5 rounded border border-[#c8ddcf] flex items-center gap-2 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded bg-emerald-50 text-emerald-600 shrink-0">
                   <CloudSun size={16} />
                 </div>
-                <div>
-                  <div className="text-[10px] text-gray-500 font-stencil font-bold uppercase">ATMOSPHERE</div>
-                  <div className="font-bold text-gray-900 text-xs truncate max-w-[130px]" title={liveWeather?.current?.weatherLabel || 'Clear'}>
+                <div className="min-w-0">
+                  <div className="text-[9px] sm:text-[10px] text-gray-500 font-stencil font-bold uppercase truncate">ATMOSPHERE</div>
+                  <div className="font-bold text-gray-900 text-xs truncate" title={liveWeather?.current?.weatherLabel || 'Clear'}>
                     {isWeatherLoading ? (
                       <span className="text-gray-400 text-xs">Updating...</span>
                     ) : (
@@ -727,13 +729,13 @@ export default function TacticalMap({
               </div>
 
               {/* Relative Humidity */}
-              <div className="bg-white p-2.5 rounded border border-[#c8ddcf] flex items-center gap-2.5 shadow-2xs">
-                <div className="p-1.5 rounded bg-blue-50 text-blue-600">
+              <div className="bg-white p-2 sm:p-2.5 rounded border border-[#c8ddcf] flex items-center gap-2 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded bg-blue-50 text-blue-600 shrink-0">
                   <Droplets size={16} />
                 </div>
-                <div>
-                  <div className="text-[10px] text-gray-500 font-stencil font-bold uppercase">HUMIDITY</div>
-                  <div className="font-bold text-gray-900 text-sm">
+                <div className="min-w-0">
+                  <div className="text-[9px] sm:text-[10px] text-gray-500 font-stencil font-bold uppercase truncate">HUMIDITY</div>
+                  <div className="font-bold text-gray-900 text-xs sm:text-sm truncate">
                     {isWeatherLoading ? (
                       <span className="text-gray-400 text-xs">...</span>
                     ) : (
@@ -744,17 +746,17 @@ export default function TacticalMap({
               </div>
 
               {/* Wind Speed & Pressure */}
-              <div className="bg-white p-2.5 rounded border border-[#c8ddcf] flex items-center gap-2.5 shadow-2xs">
-                <div className="p-1.5 rounded bg-purple-50 text-purple-600">
+              <div className="bg-white p-2 sm:p-2.5 rounded border border-[#c8ddcf] flex items-center gap-2 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded bg-purple-50 text-purple-600 shrink-0">
                   <Wind size={16} />
                 </div>
-                <div>
-                  <div className="text-[10px] text-gray-500 font-stencil font-bold uppercase">WIND / PRESSURE</div>
-                  <div className="font-bold text-gray-900 text-xs">
+                <div className="min-w-0">
+                  <div className="text-[9px] sm:text-[10px] text-gray-500 font-stencil font-bold uppercase truncate">WIND / PRESS</div>
+                  <div className="font-bold text-gray-900 text-xs truncate">
                     {isWeatherLoading ? (
                       <span className="text-gray-400 text-xs">...</span>
                     ) : (
-                      `${liveWeather?.current?.windSpeed ?? '--'} km/h | ${liveWeather?.current?.pressure ? Math.round(liveWeather.current.pressure) : '--'} hPa`
+                      `${liveWeather?.current?.windSpeed ?? '--'} km/h`
                     )}
                   </div>
                 </div>
@@ -768,109 +770,113 @@ export default function TacticalMap({
       <div className="bg-[#0b1017] border border-[#1e2a3c] rounded-lg overflow-hidden shadow-2xl relative hud-corner-brackets">
         
         {/* Header HUD Bar */}
-        <div className="px-4 py-2.5 bg-[#0e141e] border-b border-[#1c2738] flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <Radio className="text-[#00e655] animate-pulse" size={16} />
-            <h2 className="font-stencil font-bold text-base text-white tracking-wider flex items-center gap-2">
+        <div className="px-3 sm:px-4 py-2.5 bg-[#0e141e] border-b border-[#1c2738] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2 min-w-0">
+            <Radio className="text-[#00e655] animate-pulse shrink-0" size={16} />
+            <h2 className="font-stencil font-bold text-sm sm:text-base text-white tracking-wider flex items-center gap-2 truncate">
               <span>GIS LOGISTICS THEATRE</span>
-              <span className="text-gray-400 font-sans text-xs font-normal">Northern Command &bull; Ladakh &bull; Siachen</span>
+              <span className="text-gray-400 font-sans text-[11px] font-normal hidden sm:inline truncate">Northern Command &bull; Ladakh</span>
             </h2>
           </div>
           
-          {/* True Geographic Map Layer Switcher */}
-          <div className="flex items-center gap-2 text-xs font-mono">
-            <span className="text-gray-400 text-[11px] hidden sm:inline flex items-center gap-1">
-              <Layers size={12} /> STYLE:
-            </span>
-            <div className="flex bg-[#080d14] rounded p-0.5 border border-[#1e2b3c]">
+          {/* True Geographic Map Layer Switcher - Scrollable / Compact on Mobile */}
+          <div className="flex items-center gap-1.5 text-xs font-mono max-w-full overflow-x-auto scrollbar-none w-full sm:w-auto">
+            <div className="flex bg-[#080d14] rounded p-0.5 border border-[#1e2b3c] shrink-0 w-full sm:w-auto justify-between sm:justify-start">
               <button
                 type="button"
                 onClick={() => setMapMode('STREET')}
-                className={`px-2.5 py-1 rounded text-[11px] font-stencil font-bold tracking-wider transition-all cursor-pointer flex items-center gap-1 ${
+                className={`flex-1 sm:flex-initial px-2 sm:px-2.5 py-1 rounded text-[10px] sm:text-[11px] font-stencil font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
                   mapMode === 'STREET'
                     ? 'bg-[#1b3d22] text-[#00e655] border border-[#00e655]/40 shadow-xs'
                     : 'text-gray-400 hover:text-white'
                 }`}
                 title="True OpenStreetMap Geographic View with Roads, Towns, and Passes"
               >
-                <MapIcon size={11} />
-                <span>🗺️ STANDARD MAP</span>
+                <span>🗺️</span>
+                <span className="hidden xs:inline">STANDARD</span>
+                <span className="xs:hidden">MAP</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setMapMode('SATELLITE')}
-                className={`px-2.5 py-1 rounded text-[11px] font-stencil font-bold tracking-wider transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-2 sm:px-2.5 py-1 rounded text-[10px] sm:text-[11px] font-stencil font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
                   mapMode === 'SATELLITE'
                     ? 'bg-[#ff6600] text-white shadow-xs'
                     : 'text-gray-400 hover:text-white'
                 }`}
                 title="High-Resolution Satellite Recon Imagery"
               >
-                🛰️ SATELLITE
+                <span>🛰️</span>
+                <span className="hidden xs:inline">SATELLITE</span>
+                <span className="xs:hidden">SAT</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setMapMode('TOPO')}
-                className={`px-2.5 py-1 rounded text-[11px] font-stencil font-bold tracking-wider transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-2 sm:px-2.5 py-1 rounded text-[10px] sm:text-[11px] font-stencil font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
                   mapMode === 'TOPO'
                     ? 'bg-[#d4b483] text-[#101722] font-bold shadow-xs'
                     : 'text-gray-400 hover:text-white'
                 }`}
                 title="Topographic Elevation & Mountain Contours"
               >
-                ⛰️ TOPO RELIEF
+                <span>⛰️</span>
+                <span className="hidden xs:inline">TOPO</span>
+                <span className="xs:hidden">TOPO</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setMapMode('OFFLINE')}
-                className={`px-2.5 py-1 rounded text-[11px] font-stencil font-bold tracking-wider transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-2 sm:px-2.5 py-1 rounded text-[10px] sm:text-[11px] font-stencil font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
                   mapMode === 'OFFLINE'
                     ? 'bg-sky-900 text-sky-200 border border-sky-400/40 shadow-xs'
                     : 'text-gray-400 hover:text-white'
                 }`}
                 title="100% Offline Procedural Grid (Zero Area Network)"
               >
-                🎯 ZERO-NET GRID
+                <span>🎯</span>
+                <span className="hidden xs:inline">ZERO-NET</span>
+                <span className="xs:hidden">ZERO</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Leaflet Map Div with True Natural Rendering */}
+        {/* Leaflet Map Div with Responsive Dynamic Height */}
         <div className="relative overflow-hidden">
           <div 
             ref={mapContainerRef} 
-            className="w-full h-[540px] z-10 real-gis-map"
+            className="w-full h-[360px] sm:h-[460px] lg:h-[540px] z-10 real-gis-map"
           ></div>
 
-          {/* HUD Crosshairs in Corners */}
-          <div className="absolute top-3 left-3 z-20 pointer-events-none text-gray-800 bg-white/80 backdrop-blur-xs px-2 py-0.5 rounded font-mono text-[10px] font-bold border border-gray-300 shadow-xs">
+          {/* HUD Coordinates in Corners */}
+          <div className="absolute top-3 left-3 z-20 pointer-events-none text-gray-800 bg-white/80 backdrop-blur-xs px-2 py-0.5 rounded font-mono text-[9px] sm:text-[10px] font-bold border border-gray-300 shadow-xs">
             LAT 34°27'N &bull; LON 77°35'E
           </div>
 
-          <div className="absolute bottom-3 left-3 z-20 pointer-events-none bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded text-gray-800 font-mono text-[11px] font-bold border border-gray-300 shadow-xs flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse"></span>
-            <span>GIS RECON: ACTIVE &bull; CLICK ANYWHERE TO PINPOINT</span>
+          <div className="absolute bottom-3 left-3 z-20 pointer-events-none bg-white/90 backdrop-blur-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded text-gray-800 font-mono text-[10px] sm:text-[11px] font-bold border border-gray-300 shadow-xs flex items-center gap-1.5 max-w-[90%] truncate">
+            <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse shrink-0"></span>
+            <span className="truncate">GIS RECON: ACTIVE &bull; CLICK ANYWHERE TO PINPOINT</span>
           </div>
         </div>
       </div>
 
       {/* Selected Convoy Telemetry Details Box */}
       {selectedNode && (
-        <div className="bg-[#0c1119] border border-[#1e2a3c] rounded-lg p-5 shadow-2xl hud-corner-brackets">
-          <div className="flex items-center justify-between mb-4 border-b border-[#1b2636] pb-3">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded bg-[#182332] text-[#ff6600] border border-[#27384e]">
+        <div className="bg-[#0c1119] border border-[#1e2a3c] rounded-lg p-3.5 sm:p-5 shadow-2xl hud-corner-brackets">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 border-b border-[#1b2636] pb-3">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div className="p-1.5 sm:p-2 rounded bg-[#182332] text-[#ff6600] border border-[#27384e] shrink-0">
                 <MapPin size={20} />
               </div>
-              <div>
-                <h3 className="font-stencil font-bold text-lg text-white tracking-wide">
+              <div className="min-w-0">
+                <h3 className="font-stencil font-bold text-base sm:text-lg text-white tracking-wide truncate">
                   {selectedNode.containerId} &bull; <span className="text-gray-400 font-sans text-xs font-normal">{selectedNode.baseName || 'In Transit'}</span>
                 </h3>
-                <p className="text-xs text-[#d4b483] font-mono">
+                <p className="text-[11px] sm:text-xs text-[#d4b483] font-mono truncate">
                   COORDS: {selectedNode.location?.coordinates ? `${selectedNode.location.coordinates[1].toFixed(4)}°N, ${selectedNode.location.coordinates[0].toFixed(4)}°E` : 'GPS FIX ACTIVE'}
                 </p>
               </div>

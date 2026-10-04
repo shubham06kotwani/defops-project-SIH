@@ -350,14 +350,12 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
       </div>
 
       {/* 2. Filters & Raise Indent Action Bar */}
-      <div className="bg-white border border-[#c8ddcf] rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-xs hud-corner-brackets">
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <Filter size={14} className="text-[#ff6600]" />
-          
+      <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 sm:p-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-xs hud-corner-brackets">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs flex-1 w-full md:w-auto">
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono outline-none focus:border-[#ff6600]"
+            className="w-full bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono outline-none focus:border-[#ff6600]"
           >
             <option value="ALL">ALL SUPPLY CLASSES</option>
             <option value="AMMUNITION">AMMUNITION (CLASS V)</option>
@@ -369,7 +367,7 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
           <select
             value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
-            className="bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono outline-none focus:border-[#ff6600]"
+            className="w-full bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono outline-none focus:border-[#ff6600]"
           >
             <option value="ALL">ALL PRIORITIES</option>
             <option value="CRITICAL">CRITICAL (DEFCON 1)</option>
@@ -381,7 +379,7 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono outline-none focus:border-[#ff6600]"
+            className="w-full bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono outline-none focus:border-[#ff6600]"
           >
             <option value="ALL">ALL STATUSES</option>
             <option value="PENDING">PENDING APPROVAL</option>
@@ -395,16 +393,18 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
         <button
           type="button"
           onClick={() => setShowModal(true)}
-          className="bg-[#ff6600] hover:bg-[#e65100] text-white font-stencil font-bold text-xs tracking-wider px-4 py-2 rounded flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+          className="w-full md:w-auto bg-[#ff6600] hover:bg-[#e65100] text-white font-stencil font-bold text-xs tracking-wider px-4 py-2 rounded flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer shrink-0"
         >
           <Plus size={15} />
           <span>RAISE TACTICAL INDENT</span>
         </button>
       </div>
 
-      {/* 3. Requisitions Table with Separation-of-Duties Audit */}
+      {/* 3. Requisitions - Desktop Table & Mobile Tactical Cards */}
       <div className="bg-white border border-[#c8ddcf] rounded-lg overflow-hidden shadow-xs hud-corner-brackets">
-        <div className="overflow-x-auto">
+        
+        {/* Desktop View: Full Military 6-Column Tabular View (>= 768px) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#f0f5f1] text-[#1c3824] font-stencil text-xs tracking-wider border-b border-[#c8ddcf]">
               <tr>
@@ -516,12 +516,11 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
                         )}
                       </td>
 
-                      {/* Echelon Action Column (Strict Role & Anti-Self-Approval Enforcement) */}
+                      {/* Echelon Action Column */}
                       <td className="py-3.5 px-3.5 text-right space-y-1">
                         {item.status === 'PENDING' && (
                           <>
                             {isRequester ? (
-                              // Requester is attempting to view actions for their own indent -> Strictly blocked
                               <div className="inline-flex flex-col items-end">
                                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-amber-50 border border-amber-300 text-amber-900 text-[10px] font-mono font-bold" title="You requested this indent. Separation of duties prevents self-approval.">
                                   <Lock size={11} className="text-amber-700" />
@@ -532,7 +531,6 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
                                 </span>
                               </div>
                             ) : !isCurrentHigherAuthority ? (
-                              // Non-commander cannot approve
                               <div className="inline-flex flex-col items-end">
                                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-gray-100 border border-gray-300 text-gray-600 text-[10px] font-mono font-bold" title="Only Commander Echelon can approve requisitions.">
                                   <ShieldAlert size={11} className="text-gray-500" />
@@ -543,7 +541,6 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
                                 </span>
                               </div>
                             ) : (
-                              // Higher Authority, distinct from requester -> Authorized to Approve or Reject
                               <div className="flex items-center justify-end gap-1.5">
                                 <button
                                   type="button"
@@ -611,13 +608,158 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
             </tbody>
           </table>
         </div>
+
+        {/* Mobile View: High-Density Tactical Requisition Cards (< 768px) */}
+        <div className="block md:hidden divide-y divide-gray-200">
+          {filteredIndents.length === 0 ? (
+            <div className="py-8 text-center text-gray-500 font-mono text-xs">
+              NO REQUISITIONS LOGGED FOR CURRENT FILTERS
+            </div>
+          ) : (
+            filteredIndents.map((item) => {
+              const isRequester = item.requestedBy?.serviceNumber?.trim()?.toUpperCase() === activeUser.serviceNumber?.trim()?.toUpperCase();
+
+              return (
+                <div key={item._id || item.unitName} className="p-3.5 space-y-2.5 bg-white">
+                  {/* Top: ID, Priority, Date */}
+                  <div className="flex items-center justify-between pb-1.5 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-gray-900 text-sm">{item._id || 'IND-XXXX'}</span>
+                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold border ${getPriorityBadge(item.priority)}`}>
+                        {item.priority}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-gray-500 font-mono">
+                      {new Date(item.createdAt || Date.now()).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                    </span>
+                  </div>
+
+                  {/* Formation Post & Supply info */}
+                  <div className="space-y-1">
+                    <div className="font-semibold text-gray-900 text-xs font-sans">{item.unitName}</div>
+                    <div className="flex items-center justify-between text-xs font-mono bg-[#f7faf8] p-2 rounded border border-[#d6e5db]">
+                      <span className="font-bold text-[#997746]">
+                        {item.category}
+                      </span>
+                      <span className="font-bold text-gray-900">
+                        {item.quantity?.toLocaleString()} <small className="text-gray-500 font-normal">units</small>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Requester & Status Details */}
+                  <div className="text-[11px] font-mono space-y-1 text-gray-700">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">Originator:</span>
+                      <span className="font-bold text-gray-900">
+                        {item.requestedBy?.name || 'Officer'} [{item.requestedBy?.role || 'OPERATOR'}]
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">Status:</span>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${getStatusBadge(item.status)}`}>
+                        {item.status}
+                      </span>
+                    </div>
+
+                    {item.status === 'APPROVED' && item.approvedBy && (
+                      <div className="mt-1 text-[10px] text-emerald-800 bg-emerald-50 p-2 rounded border border-emerald-200">
+                        🎖️ Approved by: <strong>{item.approvedBy.name} ({item.approvedBy.rank})</strong>
+                      </div>
+                    )}
+
+                    {item.status === 'REJECTED' && item.rejectionReason && (
+                      <div className="mt-1 text-[10px] text-red-800 bg-red-50 p-2 rounded border border-red-200">
+                        ❌ Reason: "{item.rejectionReason}"
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action Buttons for Mobile */}
+                  <div className="pt-1">
+                    {item.status === 'PENDING' && (
+                      <>
+                        {isRequester ? (
+                          <div className="w-full text-center py-2 px-2.5 rounded bg-amber-50 border border-amber-300 text-amber-900 text-[11px] font-mono font-bold flex items-center justify-center gap-1.5">
+                            <Lock size={12} className="text-amber-700 shrink-0" />
+                            <span>SELF-APPROVAL BLOCKED (CMD REQ.)</span>
+                          </div>
+                        ) : !isCurrentHigherAuthority ? (
+                          <div className="w-full text-center py-2 px-2.5 rounded bg-gray-100 border border-gray-300 text-gray-600 text-[11px] font-mono font-bold flex items-center justify-center gap-1.5">
+                            <ShieldAlert size={12} className="text-gray-500 shrink-0" />
+                            <span>HIGHER COMMAND REQUIRED</span>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleApproveClick(item)}
+                              className="w-full py-2 rounded bg-[#1c3824] hover:bg-[#284f33] text-white font-stencil font-bold text-xs flex items-center justify-center gap-1 shadow-xs transition-all cursor-pointer"
+                            >
+                              <ShieldCheck size={13} />
+                              <span>APPROVE</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenReject(item)}
+                              className="w-full py-2 rounded bg-red-50 hover:bg-red-100 text-red-700 border border-red-300 font-stencil font-bold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer"
+                            >
+                              <Ban size={13} />
+                              <span>REJECT</span>
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {item.status === 'APPROVED' && (
+                      <button
+                        type="button"
+                        onClick={() => onUpdateStatus(item._id, 'DISPATCHED')}
+                        className="w-full py-2 rounded bg-sky-700 hover:bg-sky-800 text-white font-stencil font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                      >
+                        <Truck size={13} />
+                        <span>DISPATCH CONVOY</span>
+                      </button>
+                    )}
+
+                    {item.status === 'DISPATCHED' && (
+                      <button
+                        type="button"
+                        onClick={() => onUpdateStatus(item._id, 'DELIVERED')}
+                        className="w-full py-2 rounded bg-[#ff6600] hover:bg-[#e65100] text-white font-stencil font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                      >
+                        <CheckCircle2 size={13} />
+                        <span>CONFIRM DELIVERY</span>
+                      </button>
+                    )}
+
+                    {item.status === 'DELIVERED' && (
+                      <div className="text-center py-1 text-xs font-mono text-emerald-700 font-bold flex items-center justify-center gap-1">
+                        <CheckCircle2 size={13} /> DELIVERED &bull; COMPLETED
+                      </div>
+                    )}
+
+                    {item.status === 'REJECTED' && (
+                      <div className="text-center py-1 text-xs font-mono text-red-700 font-bold flex items-center justify-center gap-1">
+                        <X size={13} /> REQUISITION CLOSED
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
       </div>
 
       {/* 4. Modal Dialog - Tactical Requisition Form */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white border border-[#c8ddcf] rounded-lg p-6 shadow-2xl relative hud-corner-brackets">
-            <h3 className="font-stencil font-bold text-lg text-gray-900 mb-1 flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-white border border-[#c8ddcf] rounded-lg p-4 sm:p-6 shadow-2xl relative hud-corner-brackets">
+            <h3 className="font-stencil font-bold text-base sm:text-lg text-gray-900 mb-1 flex items-center gap-2">
               <FileText className="text-[#ff6600]" size={18} />
               <span>RAISE TACTICAL REQUISITION (INDENT)</span>
             </h3>
@@ -640,7 +782,7 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1">
                     Supply Class:
@@ -693,7 +835,7 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
                 <span className="font-bold">⚠️ Separation of Duties Notice:</span> Once submitted, this indent will be in <strong>PENDING</strong> status. As the originator ({activeUser.name}), you will <strong>NOT</strong> be permitted to self-approve it. Higher Authority authorization is required.
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-3 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -703,7 +845,7 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded bg-[#ff6600] hover:bg-[#e65100] text-white font-stencil font-bold text-xs tracking-wider shadow-xs cursor-pointer flex items-center gap-1.5"
+                  className="px-5 py-2 rounded bg-[#ff6600] hover:bg-[#e65100] text-white font-stencil font-bold text-xs tracking-wider shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <FileText size={13} />
                   <span>SUBMIT REQUISITION</span>
@@ -716,9 +858,9 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
 
       {/* 5. Modal Dialog - Commander Rejection Rationale */}
       {rejectingIndent && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white border border-red-300 rounded-lg p-6 shadow-2xl relative hud-corner-brackets">
-            <h3 className="font-stencil font-bold text-lg text-red-900 mb-1 flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-white border border-red-300 rounded-lg p-4 sm:p-6 shadow-2xl relative hud-corner-brackets">
+            <h3 className="font-stencil font-bold text-base sm:text-lg text-red-900 mb-1 flex items-center gap-2">
               <Ban className="text-red-600" size={18} />
               <span>COMMAND REJECTION RATIONALE</span>
             </h3>
@@ -761,7 +903,7 @@ export default function Requisitions({ indents, onAddIndent, onUpdateStatus, use
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => setRejectingIndent(null)}

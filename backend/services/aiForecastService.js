@@ -21,6 +21,25 @@ try {
 }
 
 // Operational Sector Environmental Matrices
+const queryRemoteMlService = async (payload) => {
+  const mlUrl = process.env.ML_SERVICE_URL;
+  if (!mlUrl) return null;
+  try {
+    const res = await fetch(`${mlUrl.replace(/\/$/, '')}/ml/predict`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(6000)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    // If Render cold-starts or network fails, fall back smoothly to embedded regressor
+    console.warn(`[ML-SERVICE] Remote inference fallback to embedded model: ${err.message}`);
+  }
+  return null;
+};
 const SECTOR_PROFILES = {
   NORTHERN_COMMAND: {
     name: 'Northern Command (Leh - Ladakh Axis)',
@@ -175,6 +194,7 @@ exports.calculatePredictiveDemand = async (indents = [], containers = [], sector
   const containerBonusStock = sectorContainers.length * 120; // 120 units per operational container
 
   let overallConfidenceSum = 0;
+  let remoteMlActive = false;
 
   for (const category of categories) {
     // 1. Train statistical regression on historical demand
@@ -184,16 +204,36 @@ exports.calculatePredictiveDemand = async (indents = [], containers = [], sector
     const envMultiplier = sector.categoryMultipliers[category] || 1.0;
     const terrainFriction = sector.terrainFriction;
 
-    // 3. Calculate Deterministic Daily Burn Rate
-    // Daily Burn = Base * Environmental Multiplier * Terrain Friction * (1 + TrendSlope)
-    const rawBurn = regression.meanDemand * envMultiplier * terrainFriction;
-    const trendEffect = 1 + (sector.trendSlope * (daysAhead / 30));
-    const avgDailyConsumption = Math.round(rawBurn * trendEffect);
+    // 3. Attempt inference via Python ML microservice (on Render) if configured
+    let avgDailyConsumption = null;
+    let predictedRequirement = null;
 
-    // 4. Projected Horizon Demand
-    // Projected = Daily Burn * Days * (1 + Non-linear horizon friction)
-    const horizonFriction = 1 + (0.015 * Math.log2(daysAhead / 7 + 1));
-    const predictedRequirement = Math.round(avgDailyConsumption * daysAhead * horizonFriction);
+    if (process.env.ML_SERVICE_URL) {
+      const mlResponse = await queryRemoteMlService({
+        elevation: sector.elevationMeters,
+        temperature: sector.ambientTempCelsius,
+        friction: terrainFriction,
+        troops: 500,
+        daysAhead,
+        category
+      });
+
+      if (mlResponse && mlResponse.success && mlResponse.prediction) {
+        avgDailyConsumption = Math.round(mlResponse.prediction.dailyBurnRateUnits);
+        predictedRequirement = mlResponse.prediction.totalProjectedRequirement;
+        remoteMlActive = true;
+      }
+    }
+
+    // 4. Fallback to Local Deterministic Regressor if remote ML not configured or sleeping
+    if (avgDailyConsumption === null) {
+      const rawBurn = regression.meanDemand * envMultiplier * terrainFriction;
+      const trendEffect = 1 + (sector.trendSlope * (daysAhead / 30));
+      avgDailyConsumption = Math.round(rawBurn * trendEffect);
+
+      const horizonFriction = 1 + (0.015 * Math.log2(daysAhead / 7 + 1));
+      predictedRequirement = Math.round(avgDailyConsumption * daysAhead * horizonFriction);
+    }
 
     // 5. Depot Inventory Available
     const baseStock = sector.baseDepotStock[category] || 2000;
@@ -243,7 +283,11 @@ exports.calculatePredictiveDemand = async (indents = [], containers = [], sector
 
   return {
     metadata: {
-      modelName: 'DEFOPS Ridge-Holt Alpine Forecaster v2.4',
+      modelName: remoteMlActive 
+        ? 'DEFOPS Ridge Regression Forecaster v2.4 (Render Cloud)' 
+        : 'DEFOPS Ridge-Holt Alpine Forecaster v2.4 (Embedded)',
+      mlEngineSource: remoteMlActive ? 'RENDER_CLOUD_MICROSERVICE' : 'EMBEDDED_LOCAL_ENGINE',
+      remoteMlUrl: process.env.ML_SERVICE_URL || null,
       sectorCode: sectorKey,
       sectorName: sector.name,
       elevationMeters: sector.elevationMeters,

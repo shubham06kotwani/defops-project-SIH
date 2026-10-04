@@ -317,28 +317,28 @@ export default function App() {
     : `OPTIMAL NOMINAL (${locTemp !== undefined ? `${locTemp}°C` : '16°C'})`;
 
   return (
-    <div className="min-h-screen bg-[#f4f7f5] text-gray-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f4f7f5] text-gray-900 flex flex-col font-sans overflow-x-hidden">
       
       {/* Top Classification Ribbon - Deep Olive & Desert Tan */}
-      <div className="bg-[#122416] text-[#d4b483] text-[11px] font-mono tracking-widest px-6 py-1.5 flex items-center justify-between border-b border-[#1b3621]">
-        <div className="flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-[#ff6600] animate-ping"></span>
-          <span>🔒 RESTRICTED // DEFENCE SERVICES STAFF COLLEGE &bull; MoD // SEC-LEVEL 4</span>
+      <div className="bg-[#122416] text-[#d4b483] text-[10px] sm:text-[11px] font-mono tracking-wider sm:tracking-widest px-3 sm:px-6 py-1.5 flex items-center justify-between border-b border-[#1b3621]">
+        <div className="flex items-center gap-2 truncate">
+          <span className="inline-block w-2 h-2 rounded-full bg-[#ff6600] animate-ping shrink-0"></span>
+          <span className="truncate">🔒 RESTRICTED // <span className="hidden sm:inline">DEFENCE SERVICES STAFF COLLEGE &bull; </span>MoD // SEC-LEVEL 4</span>
         </div>
-        <span className="font-mono text-xs text-emerald-200 hidden sm:inline-block">
+        <span className="font-mono text-xs text-emerald-200 hidden sm:inline-block shrink-0">
           DEFOPS MIL-NET &bull; {connected ? <span className="text-[#00e655] font-semibold">🟢 SATCOM LINK ARMED</span> : <span className="text-[#ffaa66] font-semibold">🟡 LOCAL TACTICAL SIMULATION</span>}
         </span>
       </div>
 
       {/* Military Field Telemetry & Compass Ticker */}
-      <div className="bg-[#eaf1ec] border-b border-[#c8dacf] px-6 py-1 flex items-center justify-between text-[10px] font-mono text-[#1d3d25] overflow-x-auto whitespace-nowrap">
-        <div className="flex items-center gap-4">
+      <div className="bg-[#eaf1ec] border-b border-[#c8dacf] px-3 sm:px-6 py-1 flex items-center justify-between text-[10px] font-mono text-[#1d3d25] overflow-x-auto whitespace-nowrap scrollbar-none">
+        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
           <span>THEATRE: <strong className="text-[#122416] font-bold">NORTHERN COMMAND</strong></span>
-          <span className="hidden md:inline">CORRIDORS: <strong className="text-gray-700">NH-1D // KARGIL-LEH // SIACHEN AXIS</strong></span>
+          <span className="hidden sm:inline">CORRIDORS: <strong className="text-gray-700">NH-1D // KARGIL-LEH // SIACHEN AXIS</strong></span>
           <span className="hidden lg:inline">COORDS: <strong className="text-gray-700">34.1526°N, 77.5771°E</strong></span>
         </div>
-        <div className="flex items-center gap-3">
-          <span>ELEV: <strong className="text-gray-700">3,500M - 5,400M</strong></span>
+        <div className="flex items-center gap-3 shrink-0 ml-3">
+          <span className="hidden sm:inline">ELEV: <strong className="text-gray-700">3,500M - 5,400M</strong></span>
           <span>DEFCON: <strong className="text-[#ff6600] font-bold">3 (ENHANCED READINESS)</strong></span>
         </div>
       </div>
@@ -346,14 +346,14 @@ export default function App() {
       {/* Main Header - Responsive Command Center */}
       <header className="bg-white/95 backdrop-blur-md border-b border-[#c8ddcf] px-3 sm:px-6 py-2.5 sm:py-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sticky top-0 z-30 shadow-xs">
         
-        {/* Brand */}
+        {/* Brand & Mobile User Switcher */}
         <div className="flex items-center justify-between">
           <div 
             onClick={() => setActiveTab('map')}
             className="flex items-center gap-2.5 sm:gap-3 cursor-pointer hover:opacity-90 transition-opacity"
             title="Return to GIS Map"
           >
-            <div className="relative">
+            <div className="relative shrink-0">
               <img 
                 src="/logo.jpg" 
                 alt="Indian Army Emblem" 
@@ -364,36 +364,40 @@ export default function App() {
               </div>
             </div>
             <div>
-              <h1 className="font-stencil font-bold text-xl sm:text-2xl text-gray-900 tracking-widest leading-none flex items-center gap-2">
-                DEFOPS <span className="text-[#1c3824] font-normal text-[10px] sm:text-xs font-mono tracking-normal border border-[#1c3824]/30 px-1.5 py-0.5 rounded bg-[#1c3824]/10">INDIAN ARMY</span>
+              <h1 className="font-stencil font-bold text-lg sm:text-2xl text-gray-900 tracking-wider sm:tracking-widest leading-none flex items-center gap-1.5 sm:gap-2">
+                DEFOPS <span className="text-[#1c3824] font-normal text-[9px] sm:text-xs font-mono tracking-normal border border-[#1c3824]/30 px-1.5 py-0.5 rounded bg-[#1c3824]/10 shrink-0">INDIAN ARMY</span>
               </h1>
-              <p className="text-[10px] sm:text-[11px] text-gray-500 font-sans tracking-wide mt-0.5">
+              <p className="text-[9px] sm:text-[11px] text-gray-500 font-sans tracking-wide mt-0.5 truncate max-w-[200px] xs:max-w-none">
                 Predictive Logistics &amp; Forward Supply Chain
               </p>
             </div>
           </div>
 
-          {/* Mobile Quick User Icon */}
-          <div className="md:hidden flex items-center gap-2">
+          {/* Mobile Quick User Info & Actions */}
+          <div className="md:hidden flex items-center gap-1.5">
             {user ? (
-              <div className="flex items-center gap-1.5 text-xs font-mono">
-                <span className="w-7 h-7 rounded bg-[#1c3824] text-white flex items-center justify-center font-bold text-xs font-stencil">
+              <div className="flex items-center gap-1.5 bg-[#edf4ef] p-1 rounded-md border border-[#c8ddcf] text-xs font-mono">
+                <span className="w-6 h-6 rounded bg-[#1c3824] text-white flex items-center justify-center font-bold text-xs font-stencil shrink-0">
                   {user.rank ? user.rank[0] : 'O'}
+                </span>
+                <span className="text-[10px] font-bold text-[#1c3824] max-w-[80px] truncate hidden xs:inline">
+                  {user.name.split(' ')[0]}
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="p-1.5 text-red-600 hover:text-red-700"
+                  className="p-1 text-red-600 hover:text-red-700"
                   title="Sign Out"
                 >
-                  <LogOut size={14} />
+                  <LogOut size={13} />
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => setActiveTab('login')}
-                className="px-2.5 py-1 bg-[#1c3824] text-white text-[11px] font-stencil font-bold rounded"
+                className="px-2.5 py-1 bg-[#1c3824] text-white text-[10px] font-stencil font-bold rounded flex items-center gap-1 shadow-2xs"
               >
-                LOGIN
+                <LogIn size={11} />
+                <span>LOGIN</span>
               </button>
             )}
           </div>
@@ -403,7 +407,7 @@ export default function App() {
         <nav className="flex items-center gap-1 sm:gap-1.5 bg-[#edf4ef] p-1 rounded-lg border border-[#c8ddcf] overflow-x-auto max-w-full scrollbar-none py-1">
           <button
             onClick={() => setActiveTab('map')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
               activeTab === 'map'
                 ? 'bg-[#1c3824] text-white shadow-xs'
                 : 'text-gray-700 hover:text-[#1c3824] hover:bg-white'
@@ -415,7 +419,7 @@ export default function App() {
 
           <button
             onClick={() => setActiveTab('forecast')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
               activeTab === 'forecast'
                 ? 'bg-[#1c3824] text-white shadow-xs'
                 : 'text-gray-700 hover:text-[#1c3824] hover:bg-white'
@@ -427,7 +431,7 @@ export default function App() {
 
           <button
             onClick={() => setActiveTab('indents')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
               activeTab === 'indents'
                 ? 'bg-[#1c3824] text-white shadow-xs'
                 : 'text-gray-700 hover:text-[#1c3824] hover:bg-white'
@@ -439,7 +443,7 @@ export default function App() {
 
           <button
             onClick={() => setActiveTab('telemetry')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
               activeTab === 'telemetry'
                 ? 'bg-[#1c3824] text-white shadow-xs'
                 : 'text-gray-700 hover:text-[#1c3824] hover:bg-white'
@@ -456,7 +460,7 @@ export default function App() {
 
           <button
             onClick={() => setActiveTab('login')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded text-xs font-stencil font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
               activeTab === 'login'
                 ? 'bg-[#ff6600] text-white shadow-xs'
                 : user 
@@ -504,7 +508,7 @@ export default function App() {
       </header>
 
       {/* Main Content Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 md:p-6 pb-20 md:pb-6 space-y-4 sm:space-y-6">
         
         {activeTab === 'login' ? (
           <AuthPage 
@@ -519,9 +523,9 @@ export default function App() {
           <>
             {/* Tactical Preview Notice if not logged in */}
             {!user && (
-              <div className="bg-white border border-[#c8ddcf] rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-xs hud-corner-brackets">
-                <div className="flex items-center gap-3">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff6600] animate-pulse"></span>
+              <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs hud-corner-brackets">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff6600] animate-pulse shrink-0"></span>
                   <div className="text-xs text-gray-700 font-sans">
                     <span className="font-stencil font-bold text-[#1c3824] uppercase tracking-wider mr-2">
                       OPERATIONAL PREVIEW:
@@ -531,7 +535,7 @@ export default function App() {
                 </div>
                 <button
                   onClick={() => setActiveTab('login')}
-                  className="px-3.5 py-1.5 bg-[#ff6600] hover:bg-[#e65100] text-white text-xs font-stencil font-bold rounded tracking-wider flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-3.5 py-1.5 bg-[#ff6600] hover:bg-[#e65100] text-white text-xs font-stencil font-bold rounded tracking-wider flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer shrink-0"
                 >
                   <LogIn size={13} />
                   <span>SIGN IN NOW</span>
@@ -540,32 +544,32 @@ export default function App() {
             )}
 
             {/* Operational Sector & Geographic Location Controller Ribbon */}
-            <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 shadow-xs hud-corner-brackets flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <div className="p-1.5 rounded bg-[#1c3824] text-white">
+            <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 sm:p-3.5 shadow-xs hud-corner-brackets flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="p-1.5 sm:p-2 rounded bg-[#1c3824] text-white shrink-0">
                   <MapPin size={16} />
                 </div>
-                <div>
-                  <div className="text-[10px] font-stencil font-bold text-gray-500 uppercase tracking-widest">
+                <div className="min-w-0">
+                  <div className="text-[9px] sm:text-[10px] font-stencil font-bold text-gray-500 uppercase tracking-widest truncate">
                     ACTIVE OPERATIONAL THEATRE // TARGET OUTPOST
                   </div>
-                  <div className="font-stencil font-bold text-sm text-[#1c3824] flex items-center gap-2">
-                    <span>{activeLocation?.name || 'Northern Command Sector'}</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#e8f3ec] text-[#1c3824] border border-[#c2dcd0]">
-                      {locElevation}m ELEVATION
+                  <div className="font-stencil font-bold text-xs sm:text-sm text-[#1c3824] flex items-center gap-2 flex-wrap">
+                    <span className="truncate">{activeLocation?.name || 'Northern Command Sector'}</span>
+                    <span className="text-[9px] sm:text-[10px] font-mono px-1.5 sm:px-2 py-0.5 rounded bg-[#e8f3ec] text-[#1c3824] border border-[#c2dcd0] shrink-0">
+                      {locElevation}m ELEV
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <select
                   value={activeLocation?.id || ''}
                   onChange={(e) => {
                     const found = STRATEGIC_LOCATIONS.find(l => l.id === e.target.value);
                     if (found) setActiveLocation(found);
                   }}
-                  className="bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono font-bold outline-none focus:border-[#ff6600]"
+                  className="w-full sm:w-auto bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 py-1.5 text-xs font-mono font-bold outline-none focus:border-[#ff6600]"
                 >
                   {STRATEGIC_LOCATIONS.map(loc => (
                     <option key={loc.id} value={loc.id}>
@@ -575,34 +579,34 @@ export default function App() {
                 </select>
 
                 {activeLocation?.liveWeather && (
-                  <div className="bg-[#f0f6f2] border border-[#c2dcd0] text-[11px] font-mono px-2.5 py-1 rounded flex items-center gap-2">
+                  <div className="bg-[#f0f6f2] border border-[#c2dcd0] text-[11px] font-mono px-2.5 py-1 rounded flex items-center justify-between sm:justify-start gap-2 shrink-0">
                     <span className="font-bold text-[#1c3824]">
                       {activeLocation.liveWeather.weatherIcon || '☀️'} {activeLocation.liveWeather.temperature ?? '--'}°C
                     </span>
                     <span className="text-gray-500">&bull;</span>
-                    <span className="text-gray-700">{activeLocation.liveWeather.weatherLabel || 'Atmosphere'}</span>
+                    <span className="text-gray-700 truncate">{activeLocation.liveWeather.weatherLabel || 'Atmosphere'}</span>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Command Center 4 Tactical KPI Gauge Cards - Dynamic to Active Location */}
-            <section className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-              <div className="bg-white border border-[#c8ddcf] rounded-lg p-4 shadow-xs border-l-4 border-l-[#1c3824] hud-corner-brackets transition-all hover:border-[#1c3824]">
+            {/* Command Center 4 Tactical KPI Gauge Cards - Responsive Grid */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs">
+              <div className="bg-white border border-[#c8ddcf] rounded-lg p-3.5 sm:p-4 shadow-xs border-l-4 border-l-[#1c3824] hud-corner-brackets transition-all hover:border-[#1c3824]">
                 <div className="text-[#1c3824] font-stencil font-bold uppercase tracking-wider text-xs flex items-center justify-between">
                   <span>ACTIVE FORMATIONS</span>
                   <span className="text-[10px] font-mono text-gray-500">GIS LIVE</span>
                 </div>
-                <div className="font-stencil font-bold text-3xl text-gray-900 mt-1">
+                <div className="font-stencil font-bold text-2xl sm:text-3xl text-gray-900 mt-1">
                   {containers.length} <small className="text-xs font-normal text-gray-500 font-sans">DEPOTS &amp; CONVOYS</small>
                 </div>
-                <div className="text-[11px] text-[#16a34a] font-mono mt-1 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-ping"></span>
-                  <span>{activeLocation?.name?.split(' (')[0] || 'Northern Axis'} Corridor</span>
+                <div className="text-[11px] text-[#16a34a] font-mono mt-1 flex items-center gap-1.5 truncate">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-ping shrink-0"></span>
+                  <span className="truncate">{activeLocation?.name?.split(' (')[0] || 'Northern Axis'} Corridor</span>
                 </div>
               </div>
 
-              <div className={`bg-white rounded-lg p-4 shadow-xs border-l-4 hud-corner-brackets transition-all ${
+              <div className={`bg-white rounded-lg p-3.5 sm:p-4 shadow-xs border-l-4 hud-corner-brackets transition-all ${
                 isFreezingRisk || isHeatRisk || breachCount > 0 
                   ? 'border border-red-300 border-l-red-600 bg-red-50/50' 
                   : 'border border-[#c8ddcf] border-l-[#ff6600] hover:border-[#ff6600]'
@@ -611,42 +615,42 @@ export default function App() {
                   <span>COLD-CHAIN ASSURANCE</span>
                   <span className="text-[10px] font-mono text-gray-500">SENSORS</span>
                 </div>
-                <div className={`font-stencil font-bold text-2xl mt-1 ${
+                <div className={`font-stencil font-bold text-lg sm:text-xl md:text-2xl mt-1 truncate ${
                   isFreezingRisk ? 'text-sky-700' : isHeatRisk || breachCount > 0 ? 'text-red-600' : 'text-[#d97706]'
-                }`}>
+                }`} title={locThermalStatus}>
                   {locThermalStatus}
                 </div>
-                <div className="text-[11px] text-gray-500 font-mono mt-1">
+                <div className="text-[10px] sm:text-[11px] text-gray-500 font-mono mt-1 truncate">
                   {isFreezingRisk 
-                    ? 'Sub-zero freeze hazard • Cryo-protection active' 
+                    ? 'Sub-zero freeze hazard • Cryo active' 
                     : isHeatRisk 
-                    ? 'Heat threshold exceeded • Active cooling on' 
+                    ? 'Heat threshold exceeded • Cooling active' 
                     : 'Thermal Envelope: -10°C to 25.0°C Nominal'}
                 </div>
               </div>
 
-              <div className="bg-white border border-[#c8ddcf] rounded-lg p-4 shadow-xs border-l-4 border-l-[#d4b483] hud-corner-brackets transition-all hover:border-[#d4b483]">
+              <div className="bg-white border border-[#c8ddcf] rounded-lg p-3.5 sm:p-4 shadow-xs border-l-4 border-l-[#d4b483] hud-corner-brackets transition-all hover:border-[#d4b483]">
                 <div className="text-[#997746] font-stencil font-bold uppercase tracking-wider text-xs flex items-center justify-between">
                   <span>BUFFER SUSTAINABILITY</span>
                   <span className="text-[10px] font-mono text-gray-500">AI PROJECTION</span>
                 </div>
-                <div className="font-stencil font-bold text-3xl text-[#997746] mt-1">
+                <div className="font-stencil font-bold text-2xl sm:text-3xl text-[#997746] mt-1">
                   {dynamicBufferDays} DAYS <small className="text-xs font-normal text-gray-500 font-sans">RESERVE</small>
                 </div>
-                <div className="text-[11px] text-gray-500 font-mono mt-1">
+                <div className="text-[10px] sm:text-[11px] text-gray-500 font-mono mt-1 truncate">
                   {activeLocation?.name?.split(' (')[0] || 'Forward Base'} ({locElevation}m) Burn Dynamics
                 </div>
               </div>
 
-              <div className="bg-white border border-[#c8ddcf] rounded-lg p-4 shadow-xs border-l-4 border-l-[#18294a] hud-corner-brackets transition-all hover:border-[#243a66]">
+              <div className="bg-white border border-[#c8ddcf] rounded-lg p-3.5 sm:p-4 shadow-xs border-l-4 border-l-[#18294a] hud-corner-brackets transition-all hover:border-[#243a66]">
                 <div className="text-[#18294a] font-stencil font-bold uppercase tracking-wider text-xs flex items-center justify-between">
                   <span>PENDING INDENTS</span>
                   <span className="text-[10px] font-mono text-gray-500">ACTION</span>
                 </div>
-                <div className="font-stencil font-bold text-3xl text-sky-700 mt-1">
+                <div className="font-stencil font-bold text-2xl sm:text-3xl text-sky-700 mt-1">
                   {pendingIndents} <small className="text-xs font-normal text-gray-500 font-sans">AWAITING</small>
                 </div>
-                <div className="text-[11px] text-gray-500 font-mono mt-1">
+                <div className="text-[10px] sm:text-[11px] text-gray-500 font-mono mt-1 truncate">
                   Priority Requisitions for {activeLocation?.name?.split(' ')[0] || 'HQ'}
                 </div>
               </div>
@@ -699,14 +703,81 @@ export default function App() {
 
       </main>
 
+      {/* Mobile Bottom Navigation Bar (Thumb ergonomics for phones & small tablets) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#c8ddcf] px-1 py-1.5 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] flex items-center justify-around">
+        <button
+          onClick={() => setActiveTab('map')}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded transition-all cursor-pointer ${
+            activeTab === 'map' ? 'text-[#1c3824] font-bold' : 'text-gray-500 hover:text-gray-800'
+          }`}
+        >
+          <MapPin size={18} className={activeTab === 'map' ? 'text-[#ff6600]' : ''} />
+          <span className="text-[10px] font-stencil tracking-wider mt-0.5">GIS MAP</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('forecast')}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded transition-all cursor-pointer ${
+            activeTab === 'forecast' ? 'text-[#1c3824] font-bold' : 'text-gray-500 hover:text-gray-800'
+          }`}
+        >
+          <TrendingUp size={18} className={activeTab === 'forecast' ? 'text-[#ff6600]' : ''} />
+          <span className="text-[10px] font-stencil tracking-wider mt-0.5">FORECAST</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('indents')}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded transition-all cursor-pointer relative ${
+            activeTab === 'indents' ? 'text-[#1c3824] font-bold' : 'text-gray-500 hover:text-gray-800'
+          }`}
+        >
+          <div className="relative">
+            <FileText size={18} className={activeTab === 'indents' ? 'text-[#ff6600]' : ''} />
+            {indents.length > 0 && (
+              <span className="absolute -top-1 -right-2 bg-[#1c3824] text-white text-[9px] font-mono px-1 rounded-full font-bold">
+                {indents.length}
+              </span>
+            )}
+          </div>
+          <span className="text-[10px] font-stencil tracking-wider mt-0.5">INDENTS</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('telemetry')}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded transition-all cursor-pointer relative ${
+            activeTab === 'telemetry' ? 'text-[#1c3824] font-bold' : 'text-gray-500 hover:text-gray-800'
+          }`}
+        >
+          <div className="relative">
+            <Truck size={18} className={activeTab === 'telemetry' ? 'text-[#ff6600]' : ''} />
+            {anomalyCount > 0 && (
+              <span className="absolute -top-1 -right-2 bg-red-600 text-white text-[9px] font-mono px-1 rounded-full font-bold animate-pulse">
+                {anomalyCount}
+              </span>
+            )}
+          </div>
+          <span className="text-[10px] font-stencil tracking-wider mt-0.5">TRACKER</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('login')}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded transition-all cursor-pointer ${
+            activeTab === 'login' ? 'text-[#1c3824] font-bold' : 'text-gray-500 hover:text-gray-800'
+          }`}
+        >
+          <LogIn size={18} className={activeTab === 'login' ? 'text-[#ff6600]' : ''} />
+          <span className="text-[10px] font-stencil tracking-wider mt-0.5">{user ? 'SWITCH' : 'LOGIN'}</span>
+        </button>
+      </nav>
+
       {/* Tactical Command Center Footer */}
-      <footer className="bg-white border-t border-gray-200 py-3 text-center text-xs text-gray-600 font-mono flex flex-wrap items-center justify-center gap-2">
+      <footer className="bg-white border-t border-gray-200 py-3 mb-14 md:mb-0 text-center text-xs text-gray-600 font-mono flex flex-wrap items-center justify-center gap-2 px-3">
         <span className="text-[#1c3824] font-bold">DEFOPS TACTICAL</span>
         <span>&bull;</span>
         <span>INDIAN ARMY LOGISTICS ASSURANCE</span>
         <span>&bull;</span>
-        <span>DEFENCE SERVICES STAFF COLLEGE</span>
-        <span>&bull;</span>
+        <span className="hidden sm:inline">DEFENCE SERVICES STAFF COLLEGE</span>
+        <span className="hidden sm:inline">&bull;</span>
         <span className="text-[#16a34a] font-semibold">SATELLITE GIS ACTIVE</span>
       </footer>
 

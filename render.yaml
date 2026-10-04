@@ -1,32 +1,15 @@
 services:
   - type: web
-    name: defops-backend
-    runtime: node
-    plan: free
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: npm start
-    healthCheckPath: /health
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 10000
-      - key: JWT_SECRET
-        generateValue: true
-      - key: MONGO_URI
-        sync: false
-      - key: CLIENT_URL
-        sync: false
-
-  - type: web
     name: defops-ml-service
     runtime: python
-    plan: free
     rootDir: ml
+    plan: free
+    region: singapore
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     healthCheckPath: /health
     envVars:
+      - key: PORT
+        value: 10000
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.11.9

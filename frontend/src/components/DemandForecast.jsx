@@ -195,18 +195,18 @@ export default function DemandForecast({
   return (
     <div className="space-y-4">
       {/* Dynamic Controls Bar */}
-      <div className="bg-white border border-[#c8ddcf] rounded-lg p-4 shadow-xs hud-corner-brackets flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 sm:p-4 shadow-xs hud-corner-brackets flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
         
         {/* Location Dropdown */}
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="text-xs font-stencil font-bold text-[#1c3824] uppercase tracking-wider flex items-center gap-1.5">
+        <div className="flex flex-col xs:flex-row xs:items-center gap-1.5 xs:gap-3 flex-1 min-w-0">
+          <label className="text-xs font-stencil font-bold text-[#1c3824] uppercase tracking-wider flex items-center gap-1.5 shrink-0">
             <Navigation size={14} className="text-[#ff6600]" />
-            <span>OPERATIONAL OUTPOST:</span>
+            <span>OUTPOST:</span>
           </label>
           <select
             value={selectedLocationId}
             onChange={handleLocationChange}
-            className="bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-3 py-1.5 text-xs font-mono font-bold outline-none focus:border-[#ff6600] shadow-2xs"
+            className="w-full xs:w-auto flex-1 bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded px-2.5 sm:px-3 py-1.5 text-xs font-mono font-bold outline-none focus:border-[#ff6600] shadow-2xs"
           >
             {STRATEGIC_LOCATIONS.map((loc) => (
               <option key={loc.id} value={loc.id}>
@@ -216,85 +216,87 @@ export default function DemandForecast({
           </select>
         </div>
 
-        {/* Garrison Personnel Slider */}
-        <div className="flex items-center gap-3 bg-[#f8faf8] px-3 py-1.5 rounded border border-[#c8ddcf]">
-          <span className="text-xs font-stencil font-bold text-[#1c3824] uppercase tracking-wider flex items-center gap-1">
-            <Users size={13} className="text-emerald-700" />
-            <span>TROOPS:</span>
-          </span>
-          <select
-            value={garrisonStrength}
-            onChange={(e) => setGarrisonStrength(Number(e.target.value))}
-            className="bg-white border border-gray-300 text-gray-800 rounded px-2 py-0.5 text-xs font-mono font-bold outline-none"
-          >
-            <option value="150">150 Troops (Forward Outpost)</option>
-            <option value="300">300 Troops (Company Base)</option>
-            <option value="500">500 Troops (Battalion HQ)</option>
-            <option value="1000">1,000 Troops (Brigade Sector)</option>
-            <option value="2000">2,000 Troops (Divisional Hub)</option>
-          </select>
-        </div>
-
-        {/* Forecast Days Horizon */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-stencil font-bold text-[#1c3824] uppercase tracking-wider mr-1">
-            HORIZON:
-          </span>
-          {[7, 15, 30, 60, 90].map((days) => (
-            <button
-              key={days}
-              type="button"
-              onClick={() => setDaysAhead(days)}
-              className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all cursor-pointer ${
-                daysAhead === days
-                  ? 'bg-[#ff6600] text-white shadow-xs'
-                  : 'bg-[#f0f5f1] text-gray-700 hover:text-[#1c3824] border border-[#c8ddcf]'
-              }`}
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5">
+          {/* Garrison Personnel Selector */}
+          <div className="flex items-center gap-2 bg-[#f8faf8] px-2.5 py-1.5 rounded border border-[#c8ddcf]">
+            <span className="text-xs font-stencil font-bold text-[#1c3824] uppercase tracking-wider flex items-center gap-1 shrink-0">
+              <Users size={13} className="text-emerald-700" />
+              <span>TROOPS:</span>
+            </span>
+            <select
+              value={garrisonStrength}
+              onChange={(e) => setGarrisonStrength(Number(e.target.value))}
+              className="bg-white border border-gray-300 text-gray-800 rounded px-1.5 py-0.5 text-xs font-mono font-bold outline-none"
             >
-              {days}D
-            </button>
-          ))}
+              <option value="150">150</option>
+              <option value="300">300</option>
+              <option value="500">500 (Battalion)</option>
+              <option value="1000">1,000 (Brigade)</option>
+              <option value="2000">2,000 (Divisional)</option>
+            </select>
+          </div>
 
-          <button
-            onClick={calculateDynamicForecast}
-            disabled={loading}
-            className="ml-2 p-1.5 rounded bg-[#f0f5f1] hover:bg-[#e2ece5] text-[#1c3824] border border-[#c8ddcf] transition-colors cursor-pointer"
-            title="Recalculate Dynamic Terrain Model"
-          >
-            <RefreshCw size={14} className={loading ? 'animate-spin text-[#ff6600]' : ''} />
-          </button>
+          {/* Forecast Days Horizon */}
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-none pb-0.5">
+            <span className="text-[11px] font-stencil font-bold text-[#1c3824] uppercase tracking-wider mr-1 hidden xs:inline">
+              HORIZON:
+            </span>
+            {[7, 15, 30, 60, 90].map((days) => (
+              <button
+                key={days}
+                type="button"
+                onClick={() => setDaysAhead(days)}
+                className={`px-2 py-1 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                  daysAhead === days
+                    ? 'bg-[#ff6600] text-white shadow-xs'
+                    : 'bg-[#f0f5f1] text-gray-700 hover:text-[#1c3824] border border-[#c8ddcf]'
+                }`}
+              >
+                {days}D
+              </button>
+            ))}
+
+            <button
+              onClick={calculateDynamicForecast}
+              disabled={loading}
+              className="ml-1 p-1.5 rounded bg-[#f0f5f1] hover:bg-[#e2ece5] text-[#1c3824] border border-[#c8ddcf] transition-colors cursor-pointer"
+              title="Recalculate Dynamic Terrain Model"
+            >
+              <RefreshCw size={13} className={loading ? 'animate-spin text-[#ff6600]' : ''} />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Dynamic Telemetry & Environmental Intelligence Card */}
-      <div className="bg-[#f0f6f2] border border-[#c2dcd0] rounded-lg p-3.5 shadow-xs hud-corner-brackets">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-2 pb-2 border-b border-[#c8ddcf]">
-          <div className="flex items-center gap-2">
-            <Activity className="text-[#ff6600]" size={16} />
-            <span className="font-stencil font-bold text-xs text-[#1c3824] tracking-wider uppercase">
-              {currentLocation.name} &bull; DYNAMIC LOGISTICS ENVELOPE
+      <div className="bg-[#f0f6f2] border border-[#c2dcd0] rounded-lg p-3 sm:p-3.5 shadow-xs hud-corner-brackets">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-2.5 pb-2 border-b border-[#c8ddcf]">
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
+            <Activity className="text-[#ff6600] shrink-0" size={16} />
+            <span className="font-stencil font-bold text-xs text-[#1c3824] tracking-wider uppercase truncate">
+              {currentLocation.name} &bull; DYNAMIC ENVELOPE
             </span>
-            <span className="bg-[#1c3824] text-[#00e655] text-[10px] font-mono px-2 py-0.5 rounded font-bold">
+            <span className="bg-[#1c3824] text-[#00e655] text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded font-bold shrink-0">
               OPEN-METEO SYNCED (96.8% FIT)
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-gray-800">
-            <span className="flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-[#c8ddcf]">
-              <Mountain size={13} className="text-[#1c3824]" />
-              <strong>{currentLocation.elev || 3500}m</strong> Altitude
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono text-gray-800">
+            <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-[#c8ddcf]">
+              <Mountain size={13} className="text-[#1c3824] shrink-0" />
+              <strong className="truncate">{currentLocation.elev || 3500}m</strong>
             </span>
-            <span className="flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-[#c8ddcf]">
-              <Thermometer size={13} className={(localWeather?.temperature ?? 0) < -10 ? 'text-blue-600' : 'text-emerald-700'} />
-              <strong>{localWeather?.temperature ?? '--'}°C</strong> {localWeather?.weatherLabel || 'Atmosphere'}
+            <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-[#c8ddcf]">
+              <Thermometer size={13} className={`shrink-0 ${(localWeather?.temperature ?? 0) < -10 ? 'text-blue-600' : 'text-emerald-700'}`} />
+              <strong className="truncate">{localWeather?.temperature ?? '--'}°C</strong>
             </span>
-            <span className="flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-[#c8ddcf]">
-              <Wind size={13} className="text-gray-600" />
-              <strong>{localWeather?.windSpeed ?? '--'} km/h</strong> Wind
+            <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-[#c8ddcf]">
+              <Wind size={13} className="text-gray-600 shrink-0" />
+              <strong className="truncate">{localWeather?.windSpeed ?? '--'} km/h</strong>
             </span>
-            <span className="flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-[#c8ddcf] text-[#ff6600] font-bold">
-              <Zap size={13} />
-              Drag Coeff: {metadata?.frictionCoefficient}x
+            <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-[#c8ddcf] text-[#ff6600] font-bold">
+              <Zap size={13} className="shrink-0" />
+              <span className="truncate">{metadata?.frictionCoefficient}x Drag</span>
             </span>
           </div>
         </div>
@@ -311,7 +313,7 @@ export default function DemandForecast({
       </div>
 
       {/* Forecast Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {forecasts.map((item) => {
           const isHighRisk = item.riskLevel === 'HIGH' || item.riskLevel === 'CRITICAL' || item.reorderRequired;
           const pct = Math.min(100, Math.round((item.daysOfSustainability / 30) * 100));
@@ -319,7 +321,7 @@ export default function DemandForecast({
           return (
             <div
               key={item.category}
-              className={`bg-white border rounded-lg p-4 shadow-xs flex flex-col justify-between transition-all hud-corner-brackets ${
+              className={`bg-white border rounded-lg p-3.5 sm:p-4 shadow-xs flex flex-col justify-between transition-all hud-corner-brackets ${
                 isHighRisk 
                   ? 'border-red-300 bg-red-50/30 hover:border-red-500' 
                   : 'border-[#c8ddcf] hover:border-[#1c3824]/60'
@@ -349,7 +351,7 @@ export default function DemandForecast({
                         : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                     }`}
                   >
-                    {item.riskLevel === 'CRITICAL' ? 'STOCKOUT IMMINENT' : isHighRisk ? 'REORDER REQUIRED' : 'BUFFER OPTIMAL'}
+                    {item.riskLevel === 'CRITICAL' ? 'STOCKOUT' : isHighRisk ? 'REORDER' : 'OPTIMAL'}
                   </span>
                 </div>
 
@@ -361,32 +363,32 @@ export default function DemandForecast({
                   <div className="bg-[#f7faf8] p-2 rounded border border-[#d6e5db]">
                     <span className="text-[10px] text-[#997746] font-mono font-semibold block">DAILY BURN</span>
                     <span className="font-mono text-sm font-bold text-gray-900">
-                      {item.avgDailyConsumption} <small className="text-[10px] text-gray-500 font-normal">u/day</small>
+                      {item.avgDailyConsumption} <small className="text-[10px] text-gray-500 font-normal">u/d</small>
                     </span>
                   </div>
 
                   <div className="bg-[#f7faf8] p-2 rounded border border-[#d6e5db]">
-                    <span className="text-[10px] text-[#997746] font-mono font-semibold block">PROJECTED {daysAhead}D</span>
+                    <span className="text-[10px] text-[#997746] font-mono font-semibold block">REQ {daysAhead}D</span>
                     <span className="font-mono text-sm font-bold text-sky-700">
                       {item.predictedRequirement}
                     </span>
                   </div>
 
                   <div className="bg-[#f7faf8] p-2 rounded border border-[#d6e5db]">
-                    <span className="text-[10px] text-[#997746] font-mono font-semibold block">DEPOT STOCK</span>
+                    <span className="text-[10px] text-[#997746] font-mono font-semibold block">STOCK</span>
                     <span className="font-mono text-sm font-bold text-gray-900">
                       {item.currentStockAvailable}
                     </span>
                   </div>
 
                   <div className="bg-[#f7faf8] p-2 rounded border border-[#d6e5db]">
-                    <span className="text-[10px] text-[#997746] font-mono font-semibold block">SUSTAINABILITY</span>
+                    <span className="text-[10px] text-[#997746] font-mono font-semibold block">SUSTAIN</span>
                     <span
                       className={`font-mono text-sm font-bold ${
                         isHighRisk ? 'text-red-600' : 'text-emerald-700'
                       }`}
                     >
-                      {item.daysOfSustainability} DAYS
+                      {item.daysOfSustainability}D
                     </span>
                   </div>
                 </div>
@@ -420,14 +422,14 @@ export default function DemandForecast({
               <button
                 type="button"
                 onClick={() => onCreateRequisition(item.category, item.predictedRequirement, currentLocation)}
-                className={`w-full py-2 rounded font-stencil font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`w-full py-2 px-3 rounded font-stencil font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
                   isHighRisk
-                    ? 'bg-[#ff6600] hover:bg-[#e65100] text-white shadow-xs'
+                    ? 'bg-[#ff6600] hover:bg-[#e65100] text-white'
                     : 'bg-[#1c3824] hover:bg-[#284f33] text-white border border-[#1c3824]'
                 }`}
               >
-                <Box size={13} />
-                <span>DISPATCH TO {currentLocation.name.split(' (')[0].toUpperCase()}</span>
+                <Box size={13} className="shrink-0" />
+                <span className="truncate">DISPATCH REQUISITION</span>
               </button>
             </div>
           );
