@@ -524,20 +524,29 @@ export default function TacticalMap({
   return (
     <div className="space-y-4">
       {/* DYNAMIC OPEN-METEO LOCATION FETCHER & GEOGRAPHIC TARGETING CONSOLE */}
-      <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 sm:p-4 shadow-xs hud-corner-brackets">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3 pb-3 border-b border-gray-200">
-          <div className="flex items-center gap-2 flex-wrap min-w-0">
-            <Crosshair className="text-[#ff6600] shrink-0" size={18} />
-            <h3 className="font-stencil font-bold text-xs sm:text-sm text-gray-900 tracking-wider uppercase truncate">
-              OPEN-METEO DYNAMIC LOCATION FETCHER &bull; GEOGRAPHIC TARGETING
-            </h3>
-            <span className="bg-[#1c3824] text-white text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded font-bold flex items-center gap-1 shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00e655] animate-ping"></span>
-              DYNAMIC GPS ACTIVE
-            </span>
+      <div className="bg-white border border-[#c8ddcf] rounded-lg p-3 sm:p-4 shadow-xs hud-corner-brackets overflow-hidden">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 mb-3 pb-3 border-b border-gray-200">
+          <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+            <div className="p-1.5 rounded bg-orange-50 text-[#ff6600] shrink-0 mt-0.5 sm:mt-0 border border-orange-200/60">
+              <Crosshair size={18} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-stencil font-bold text-xs sm:text-sm text-gray-900 tracking-wider uppercase">
+                  OPEN-METEO LOCATION FETCHER
+                </h3>
+                <span className="bg-[#1c3824] text-white text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded font-bold inline-flex items-center gap-1 shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00e655] animate-ping"></span>
+                  DYNAMIC GPS ACTIVE
+                </span>
+              </div>
+              <div className="text-[10px] font-mono text-gray-500 uppercase tracking-wider mt-0.5">
+                Geographic Targeting &bull; Live Meteorological Telemetry
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="w-full sm:w-auto shrink-0">
             <button
               type="button"
               onClick={handleGetDeviceLocation}
@@ -552,10 +561,10 @@ export default function TacticalMap({
         </div>
 
         {/* 1. Quick Strategic Preset Dropdown & Direct Coordinate Inputs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 text-xs">
           {/* Preset Selector */}
           <div>
-            <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1">
+            <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1 text-[11px] sm:text-xs">
               Strategic Forward Outposts:
             </label>
             <select
@@ -581,36 +590,38 @@ export default function TacticalMap({
           </div>
 
           {/* Manual Coordinate Inputs with Dynamic Open-Meteo Weather Fetching */}
-          <form onSubmit={handleGoToCoords} className="md:col-span-2 flex flex-col sm:flex-row items-stretch sm:items-end gap-2">
-            <div className="flex-1 min-w-0">
-              <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1">
-                Dynamic Latitude (°N):
-              </label>
-              <input
-                type="text"
-                value={inputLat}
-                onChange={(e) => setInputLat(e.target.value)}
-                placeholder="34.1526"
-                className="w-full bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded p-2 text-xs font-mono outline-none focus:border-[#ff6600]"
-              />
-            </div>
+          <form onSubmit={handleGoToCoords} className="lg:col-span-2 flex flex-col sm:flex-row items-stretch sm:items-end gap-2">
+            <div className="grid grid-cols-2 gap-2 flex-1 min-w-0">
+              <div className="min-w-0">
+                <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1 text-[11px] sm:text-xs truncate">
+                  Latitude (°N):
+                </label>
+                <input
+                  type="text"
+                  value={inputLat}
+                  onChange={(e) => setInputLat(e.target.value)}
+                  placeholder="34.1526"
+                  className="w-full bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded p-2 text-xs font-mono outline-none focus:border-[#ff6600]"
+                />
+              </div>
 
-            <div className="flex-1 min-w-0">
-              <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1">
-                Dynamic Longitude (°E):
-              </label>
-              <input
-                type="text"
-                value={inputLng}
-                onChange={(e) => setInputLng(e.target.value)}
-                placeholder="77.5771"
-                className="w-full bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded p-2 text-xs font-mono outline-none focus:border-[#ff6600]"
-              />
+              <div className="min-w-0">
+                <label className="block text-[#1c3824] font-stencil font-bold uppercase tracking-wider mb-1 text-[11px] sm:text-xs truncate">
+                  Longitude (°E):
+                </label>
+                <input
+                  type="text"
+                  value={inputLng}
+                  onChange={(e) => setInputLng(e.target.value)}
+                  placeholder="77.5771"
+                  className="w-full bg-[#f8faf8] border border-[#c8ddcf] text-gray-800 rounded p-2 text-xs font-mono outline-none focus:border-[#ff6600]"
+                />
+              </div>
             </div>
 
             <button
               type="submit"
-              className="bg-[#1c3824] hover:bg-[#284f33] text-white font-stencil font-bold text-xs tracking-wider px-4 py-2 rounded flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
+              className="w-full sm:w-auto bg-[#1c3824] hover:bg-[#284f33] text-white font-stencil font-bold text-xs tracking-wider px-4 py-2 rounded flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
             >
               <Navigation size={13} />
               <span>FLY &amp; QUERY</span>
@@ -623,11 +634,11 @@ export default function TacticalMap({
           <div className="mt-3 p-3 sm:p-3.5 bg-[#f0f6f2] border border-[#c2dcd0] rounded-lg text-xs font-mono">
             {/* Top Bar of Target Card */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2.5 border-b border-[#c2dcd0]/80">
-              <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-start sm:items-center gap-2 min-w-0">
                 <span className="text-xl sm:text-2xl shrink-0">📍</span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-stencil font-bold text-xs sm:text-sm text-[#1c3824] truncate">
+                    <span className="font-stencil font-bold text-xs sm:text-sm text-[#1c3824] break-words">
                       {manualTarget.name}
                     </span>
                     <span className="bg-[#1c3824] text-[#00e655] text-[9px] sm:text-[10px] font-mono px-1.5 sm:px-2 py-0.5 rounded font-bold shrink-0">
@@ -655,11 +666,11 @@ export default function TacticalMap({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap sm:flex-nowrap">
                 <button
                   type="button"
                   onClick={handleCopyCoords}
-                  className="px-2.5 py-1.5 rounded bg-white hover:bg-gray-100 text-gray-800 border border-[#c8ddcf] text-[11px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
+                  className="flex-1 sm:flex-initial px-2.5 py-1.5 rounded bg-white hover:bg-gray-100 text-gray-800 border border-[#c8ddcf] text-[11px] font-mono font-bold flex items-center justify-center gap-1 transition-all cursor-pointer shadow-2xs"
                   title="Copy dynamic coordinates to clipboard"
                 >
                   {copied ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
@@ -793,8 +804,8 @@ export default function TacticalMap({
                 title="True OpenStreetMap Geographic View with Roads, Towns, and Passes"
               >
                 <span>🗺️</span>
-                <span className="hidden xs:inline">STANDARD</span>
-                <span className="xs:hidden">MAP</span>
+                <span className="hidden sm:inline">STANDARD</span>
+                <span className="sm:hidden">MAP</span>
               </button>
 
               <button
@@ -808,8 +819,8 @@ export default function TacticalMap({
                 title="High-Resolution Satellite Recon Imagery"
               >
                 <span>🛰️</span>
-                <span className="hidden xs:inline">SATELLITE</span>
-                <span className="xs:hidden">SAT</span>
+                <span className="hidden sm:inline">SATELLITE</span>
+                <span className="sm:hidden">SAT</span>
               </button>
 
               <button
@@ -823,8 +834,8 @@ export default function TacticalMap({
                 title="Topographic Elevation & Mountain Contours"
               >
                 <span>⛰️</span>
-                <span className="hidden xs:inline">TOPO</span>
-                <span className="xs:hidden">TOPO</span>
+                <span className="hidden sm:inline">TOPO</span>
+                <span className="sm:hidden">TOPO</span>
               </button>
 
               <button
@@ -838,8 +849,8 @@ export default function TacticalMap({
                 title="100% Offline Procedural Grid (Zero Area Network)"
               >
                 <span>🎯</span>
-                <span className="hidden xs:inline">ZERO-NET</span>
-                <span className="xs:hidden">ZERO</span>
+                <span className="hidden sm:inline">ZERO-NET</span>
+                <span className="sm:hidden">ZERO</span>
               </button>
             </div>
           </div>
